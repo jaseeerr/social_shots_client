@@ -1,0 +1,23 @@
+ {croppedImage && (
+             <div>
+               <span className="flex justify-center items-center">
+                  <button
+                  className="bg-blue-500 text-white rounded-md px-2 p-1 text-sm font-semibold"
+                  onClick={handleClearSelection}
+                >
+                  Clear Selection
+                </button>
+              
+              </span>
+              <span className="flex justify-center items-center">
+                
+                <button
+                  className="mt-2 bg-blue-500 text-white rounded-md px-2 p-1 text-sm font-semibold"
+                  onClick={handleImageSubmit}
+                >
+                  Submit
+                </button>
+              </span>
+             </div>
+              
+            )}
