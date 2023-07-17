@@ -16,6 +16,7 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 
 function MyProfile() {
 
+  const [bioBtn,setBioBtn] = useState(false)
   const [newp,setNewp] = useState(null)
   const [bload,setBload] = useState(false)
   const sliceData = useSelector(store => store.userInfo.userdata)
@@ -43,7 +44,8 @@ function MyProfile() {
   const goto = useNavigate()
 
   const [userdata, setUserdata] = useState(null)
-  const myData = useSelector(store=>store.userInfo.userdata)
+  const [myData,setMyData] = useState({})
+ 
 
   // buttons state
   const [followBtn,setFollowBtn] = useState(false)
@@ -68,26 +70,45 @@ function MyProfile() {
     try {
       setLoader(true);
       
-      const dataResponse = await axiosInstance.get(`profile/${id}`);
-      const data = dataResponse.data;
+      const mydata = await axiosInstance.get('myData')
+      setMyData(mydata.data)
+      
+      
+      axiosInstance.get(`profile/${id}`).then((dataResponse)=>{
+
+        const data = dataResponse.data;
+        console.log(myData)
+          console.log("---")
+        console.log(data)
+      
+        
+        
+      
+       
+      
+    
+        axiosInstance.get(`posts/${id}`).then((data1Response)=>{
+
+          
+          const data1 = data1Response.data;
+      
+          data.data1.posts = data1;
+      
+          setPosts(data1);
+          setOwn(data.own);
+          setUserdata(data.data1);
+          setUsername(data?.data?.data1?.username);
+          setEmail(data?.data?.data1?.email);
+          setPhone(data?.data?.data1?.phone);
+          setBio(data?.data?.data1?.bio);
+          setLoader(false);
+
+        })
+       
   
-      const followingBtn = await data.data1.followers.some(item => item.uid === myData._id);
-      setFollowingBtn(data.data1.followers.some(item => item.uid === myData._id));
-  
-      const data1Response = await axiosInstance.get(`posts/${id}`);
-      const data1 = data1Response.data;
-  
-      data.data1.posts = data1;
-  
-      setPosts(data1);
-      setOwn(data.own);
-      setUserdata(data.data1);
-      setUsername(data?.data?.data1?.username);
-      setEmail(data?.data?.data1?.email);
-      setPhone(data?.data?.data1?.phone);
-      setBio(data?.data?.data1?.bio);
-  
-      setLoader(false);
+
+      })
+     
     } catch (error) {
       console.error('Error occurred while fetching data:', error);
       // Handle the error accordingly
@@ -100,17 +121,19 @@ function MyProfile() {
   async function follow1(){
    
     const response = await axiosInstance.get(`follow/${id}`)
-    console.log(response)
+   
+    setFollowingBtn(true)
     getData()
 
 
   }
 
   async function unfollow1(){
-
+    
     const response = await axiosInstance.get(`unfollow/${id}`)
+    
     getData()
-
+    setFollowingBtn(false);
   }
 
 
@@ -130,8 +153,10 @@ function MyProfile() {
     }
     else {
 
-      getData()
+      getData() 
+  
     }
+    
   }, [])
 
 
@@ -146,14 +171,12 @@ function MyProfile() {
       data?.append("upload_preset", "olx_img")
       data?.append("cloud_name", "dfhcxw70v")
 
-      console.log('wrong request')
       axios.post(
         'https://api.cloudinary.com/v1_1/dfhcxw70v/image/upload',
         data
       ).then((response) => {
 
-        sliceData.dp = response.data.public_id
-        dispatch(updateUserdata(sliceData))
+        
 
         axiosInstance.get(`updatedp/${response.data.public_id}`).then((res) => {
 
@@ -176,6 +199,7 @@ function MyProfile() {
   const [showUsernameModal, setShowUsernameModal] = useState(false)
   const [showPhoneModal, setShowPhoneModal] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
+  const [showAcTypeModal,setShowAcTypeModal] = useState(false)
 
 
 
@@ -370,7 +394,7 @@ function MyProfile() {
                     <Link to={`/viewPost/${post._id}`}>
                       <img
 
-                        key={index}
+                        key={post._id}
                         src={IMG_CDN + post.picture}
                         alt={`Photo ${index + 1}`}
                         className="w-full h-60 object-cover rounded-lg cursor-pointer hover:opacity-50"
@@ -456,23 +480,65 @@ function MyProfile() {
                     <span className=''>
                       <textarea
                         onChange={(e) => {
-                          setBio(e.target.value)
-                        }}
-                        style={{ resize: "none" }} id="message" rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={userdata.bio} maxlength="150"></textarea>
-                    </span>
 
+                          setBio(e.target.value)
+                          if(e.target.value)
+                          {
+                            setBioBtn(true)
+                          }
+                          else
+                          {
+                            setBioBtn(false)
+                          }
+                        }}
+                        style={{ resize: "none" }} id="bio" rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={userdata.bio} maxlength="120"></textarea>
+                    </span>
+                    
+                    {bioBtn ?
+                    <button 
+                    onClick={()=>{
+                       const bio = document.getElementById('bio').value
+                      axiosInstance.get(`updatebio/${bio}`).then((response)=>{
+
+                        if(response.data.success)
+                        {
+                          toast.success("UPDATED")
+                          getData() 
+                        }
+                        else
+                        {
+                          toast.error("ERROR OCCURRED")
+                        }
+                      })
+
+
+                    }}
+                    className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"> Update Bio</button>
+                    :
+                    null
+                  }
 
                     {userdata.private ?
                       <span className='flex mt-3'>
                         <div className="flex items-center">
-                          <input id="checked-checkbox" checked type="checkbox" value="1" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                          <input
+                           onChange={()=>{
+                           
+                            setShowAcTypeModal(true)
+                          }}
+                          id="checked-checkbox" checked type="checkbox" value="1" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                           <label for="checked-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Private Account</label>
                         </div>
                       </span>
                       :
                       <span className='flex mt-3'>
                         <div className="flex items-center">
-                          <input id="checked-checkbox" type="checkbox" value="0" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                          <input
+                          onChange={()=>{
+                        
+                            setShowAcTypeModal(true)
+                          }}
+                          id="checked-checkbox" type="checkbox"  value="0" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                           <label for="checked-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Private Account</label>
                         </div>
                       </span>
@@ -480,15 +546,60 @@ function MyProfile() {
 
 
                   </span>
-                  {/* <ul>
-               {followers.map((follower, index) => (
-                 <li key={index} className='text-black'>{follower}</li>
-               ))}
-             </ul> */}
+               
 
                   <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
                     onClick={handleCloseModal}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+
+             {/* ACCOUNT TYPE Modal */}
+             {showAcTypeModal && (
+              <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" >
+                <div className="bg-black p-8 rounded-lg w-80">
+                  <h2 className="text-xl font-semibold mb-2 text-white"></h2>
+                  <span className=''>
+                   {userdata.private ? "Confirm to change your account type to public." : "Confirm to change your account type to private."}
+                  </span>
+                <br />
+                <button
+                onClick={()=>{
+                  let x = 0
+                  if(!userdata.private)
+                  {
+                     x = 1
+                  }
+
+                  axiosInstance.get(`updateactype/${x}`).then((response)=>{
+
+                    if(response.data.success)
+                    {
+                      setShowAcTypeModal(false)
+                      toast.success("UPDATED")
+                      getData()
+                     
+                    }
+                    else
+                    {
+                      toast.error("UNKNOWN ERROR OCCURRED")
+                    }
+                  })
+
+                }}
+                 className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm mr-2"
+                >
+                  Confirm
+                </button>
+                  <button
+                    className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
+                    onClick={()=>{
+                      setShowAcTypeModal(false)
+                    }}
                   >
                     Close
                   </button>
@@ -518,17 +629,47 @@ function MyProfile() {
                   </button>
                    <button
                    onClick={()=>{
+                    setBload(true)
                     const email = document.getElementById('email')
-                    console.log(email)
-                    if(email.checkValidity())
+                    const value = document.getElementById('email').value
+                    if(value==userdata.email)
                     {
-                      axiosInstance.get(``)
+                      toast.error("Enter email is same as the current one.")
+                    }
+                    else if(email.checkValidity())
+                    {
+                      setErr(false)
+                      axiosInstance.get(`update_email/${value}`).then((response)=>{
+
+                        setBload(false)
+                        if(response.data.success)
+                        {
+                          toast.success("Verification mail sent to your new mail.")
+                          getData()
+                        }
+                        else
+                        {
+                          toast.error("UNKNOWN ERROR OCCURED")
+                        }
+                        setShowEmailModal(false)
+
+                      })
                     }
                     else
                     {
+                      setErr(true)
                     }
                    }}
-                   className='mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm ml-2'>Save Changes</button>
+                   className='mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm ml-2'>
+                    
+                    {bload ? 
+                         <svg width="24" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-40 -mt-1 text-center"><g><circle cx="12" cy="3" r="1"><animate id="spinner_7Z73" begin="0;spinner_tKsu.end-0.5s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="16.50" cy="4.21" r="1"><animate id="spinner_Wd87" begin="spinner_7Z73.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="7.50" cy="4.21" r="1"><animate id="spinner_tKsu" begin="spinner_9Qlc.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="19.79" cy="7.50" r="1"><animate id="spinner_lMMO" begin="spinner_Wd87.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="4.21" cy="7.50" r="1"><animate id="spinner_9Qlc" begin="spinner_Khxv.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="21.00" cy="12.00" r="1"><animate id="spinner_5L9t" begin="spinner_lMMO.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="3.00" cy="12.00" r="1"><animate id="spinner_Khxv" begin="spinner_ld6P.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="19.79" cy="16.50" r="1"><animate id="spinner_BfTD" begin="spinner_5L9t.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="4.21" cy="16.50" r="1"><animate id="spinner_ld6P" begin="spinner_XyBs.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="16.50" cy="19.79" r="1"><animate id="spinner_7gAK" begin="spinner_BfTD.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="7.50" cy="19.79" r="1"><animate id="spinner_XyBs" begin="spinner_HiSl.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="12" cy="21" r="1"><animate id="spinner_HiSl" begin="spinner_7gAK.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><animateTransform attributeName="transform" type="rotate" dur="6s" values="360 12 12;0 12 12" repeatCount="indefinite"/></g></svg>
+                           :
+                         "Save Changes"
+                  }
+                    
+                    
+                    </button>
                 </div>
               </div>
             )}
@@ -669,11 +810,9 @@ function MyProfile() {
                     <p
                       onClick={() => {
                         const phone = document.getElementById('phone').value
-                        console.log(phone)
                       setNewp(phone)
                         axiosInstance.get(`sentotp/${phone}`).then((response)=>{
 
-                          console.log(response)
                           if(response.data.success)
                           {
                             toast.success("OTP SENT")
@@ -714,7 +853,6 @@ function MyProfile() {
                     onClick={()=>{
 
                       const otp = document.getElementById('otp').value
-                      console.log(otp,"---",newp)
                       setBload(true)
 
                       axiosInstance.get(`verifyotp?phone=${newp}&otp=${otp}`).then((response)=>{
@@ -812,7 +950,7 @@ function MyProfile() {
                   <span className=''>
                     {userdata.followers.length != 0 ? userdata.followers.map((follower, index) => {
                       return (
-                        <span key={index} className='flex py-2 max-h-20 overflow-y-auto'> 
+                        <span key={follower._id} className='flex py-2 max-h-20 overflow-y-auto'> 
                           <img src={IMG_CDN+follower.dp} alt="" className='w-7 h-7 rounded-full mr-3' />
                           <p className='text-white'>{follower.username}</p>
                         </span>
@@ -821,11 +959,7 @@ function MyProfile() {
                       )
                     }) : <p className='text-white'>You don't have any followers</p>}
                   </span>
-                  {/* <ul>
-               {followers.map((follower, index) => (
-                 <li key={index} className='text-black'>{follower}</li>
-               ))}
-             </ul> */}
+               
                   <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
                     onClick={handleCloseModal}
@@ -839,13 +973,13 @@ function MyProfile() {
             {/* Following Modal */}
             {showFollowingModal && (
               <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-                <div className="bg-black p-8 rounded-lg">
+                <div className="bg-black p-8 rounded-lg w-80">
                   <h2 className="text-xl font-semibold mb-2 text-white">Following</h2>
                   <span >
                     {userdata.following.length != 0 ? userdata.following.map((follower, index) => {
                       return (
                         <Link to={`/${follower.username}`} onClick={()=>{setShowFollowingModal(false)}}>
-                         <span key={index} className='flex py-2 max-h-20 overflow-y-auto'> 
+                         <span key={follower._id} className='flex py-2 max-h-20 overflow-y-auto'> 
                           <img src={IMG_CDN+follower.dp} alt="" className='w-7 h-7 rounded-full mr-3' />
                           <p className='text-white'>{follower.username}</p>
                         </span>
@@ -856,11 +990,7 @@ function MyProfile() {
                       )
                     }) : <p className='text-white'>You're not following anyone</p>}
                   </span>
-                  {/* <ul>
-               {following.map((followed, index) => (
-                 <li key={index} className='text-black'>{followed}</li>
-               ))}
-             </ul> */}
+               
                   <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
                     onClick={handleCloseModal}

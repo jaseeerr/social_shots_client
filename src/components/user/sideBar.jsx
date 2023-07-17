@@ -16,9 +16,8 @@ import MyAxiosInstance from '../../utils/axios';
 const SideBar = () => {
   const dispatch = useDispatch()
   const axiosInstance = MyAxiosInstance()
-  const username = useSelector(store=>store.userInfo?.userdata?.username)
-
-  const dp =useSelector(store=>store.userInfo?.userdata?.dp)
+const [username,setUsername] = useState(null)
+const [dp,setDp] = useState(null)
   
 
   
@@ -27,7 +26,9 @@ const SideBar = () => {
 
 axiosInstance.get('myData').then((response)=>{
 
-  dispatch(updateUserdata(response?.data))
+
+  setUsername(response?.data?.username)
+  setDp(response?.data?.dp)
  
 
 })
@@ -58,7 +59,7 @@ axiosInstance.get('myData').then((response)=>{
 
 
 
-    {/* Followers Modal */}
+    {/* Create Modal */}
     {showModal && (
               <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" >
                 <div className="bg-black p-8 rounded-lg w-80">

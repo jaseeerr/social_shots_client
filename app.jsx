@@ -15,6 +15,7 @@ import CreateStory from "./src/pages/createStory";
 import Login from "./src/pages/login";
 import ViewPost from "./src/pages/viewpost";
 import Explore from "./src/pages/explore";
+import ChatList from "./src/components/user/chatList";
 
 
 const images = []
@@ -79,7 +80,7 @@ const AppRouter = createBrowserRouter([
            
             {
                 path:"/test",
-                element: <Test images={images} />
+                element: <ChatList/>
             },
             {
                 path:"/createPhoto",

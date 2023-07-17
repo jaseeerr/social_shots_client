@@ -1,17 +1,36 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { IMG_CDN } from '../../config/urls'
-
+import MyAxiosInstance from '../../utils/axios'
 function ProfileBar() {
 
-  const username = useSelector(store=>store.userInfo?.userdata?.username)
-  const dp = useSelector(store=>store.userInfo?.userdata?.dp)
+  const axiosInstance = MyAxiosInstance()
+  const [username,setUsername] = useState(null)
+  const [dp,setDp] = useState(null)
 
   const goto = useNavigate()
   const goProfile = ()=>{
     goto(`/${username}`)
   }
+
+
+
+  useEffect(()=>{
+
+    axiosInstance.get('myData').then((response)=>{
+    
+    
+      setUsername(response?.data?.username)
+      setDp(response?.data?.dp)
+     
+    
+    })
+    
+      },[])
+
+
+
   return (
     <>
      <div className='border rounded-md p-9'>
