@@ -71,15 +71,33 @@ function MyProfile() {
       setLoader(true);
       
       const mydata = await axiosInstance.get('myData')
-      setMyData(mydata.data)
+      setMyData(mydata)
       
       
       axiosInstance.get(`profile/${id}`).then((dataResponse)=>{
 
         const data = dataResponse.data;
-        console.log(myData)
-          console.log("---")
-        console.log(data)
+      
+        console.log(data.data1)
+
+        let arr = data.data1.followers
+        console.log(arr)
+        console.log(mydata.data._id)
+
+
+       
+        for(let i=0;i<arr.length;i++)
+        {
+          if(data.data1.followers[i].uid == mydata.data._id)
+          {
+            console.log("BRUHHH")
+            setFollowingBtn(true)
+            break;
+          }
+        }
+     
+
+
       
         
         
@@ -121,19 +139,29 @@ function MyProfile() {
   async function follow1(){
    
     const response = await axiosInstance.get(`follow/${id}`)
-   
+   console.log(response.data.data)
+
+   userdata.followers.push(response.data.data)
+   console.log("FOLLOW UPATE");
     setFollowingBtn(true)
-    getData()
+   
 
 
   }
 
   async function unfollow1(){
-    
-    const response = await axiosInstance.get(`unfollow/${id}`)
-    
-    getData()
     setFollowingBtn(false);
+   axiosInstance.get(`unfollow/${id}`).then((data)=>{
+    console.log("unfollow update")
+    console.log(data.data.data1);
+    data.data.data1.posts = posts
+    setUserdata(data.data.data1)
+   
+    
+   })
+    
+   
+   
   }
 
 
@@ -146,7 +174,7 @@ function MyProfile() {
 
   useEffect(() => {
 
-
+    handleCloseModal()
 
     if (!localStorage.getItem('userToken')) {
       goto('/login')
@@ -248,6 +276,7 @@ function MyProfile() {
     setShowFollowingModal(false);
     setShowEditModal(false);
     setShowUsernameModal(false);
+    
 
   };
 
@@ -949,11 +978,13 @@ function MyProfile() {
                   <h2 className="text-xl font-semibold mb-2 text-white">Followers</h2>
                   <span className=''>
                     {userdata.followers.length != 0 ? userdata.followers.map((follower, index) => {
-                      return (
+                      return ( 
+                       <Link to={`/${follower.username}`} onClick={handleCloseModal}>
                         <span key={follower._id} className='flex py-2 max-h-20 overflow-y-auto'> 
                           <img src={IMG_CDN+follower.dp} alt="" className='w-7 h-7 rounded-full mr-3' />
                           <p className='text-white'>{follower.username}</p>
                         </span>
+                       </Link>
 
 
                       )
@@ -982,6 +1013,7 @@ function MyProfile() {
                          <span key={follower._id} className='flex py-2 max-h-20 overflow-y-auto'> 
                           <img src={IMG_CDN+follower.dp} alt="" className='w-7 h-7 rounded-full mr-3' />
                           <p className='text-white'>{follower.username}</p>
+                          
                         </span>
 
                         </Link>
