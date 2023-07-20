@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate,useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faHeart, faXmark, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faHeart, faXmark,faEllipsis, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import MyAxiosInstance from '../utils/axios';
 import { IMG_CDN } from '../config/urls';
+import { useSelector } from 'react-redux';
 
 const ViewPost = ({ images }) => {
     const axiosInstance = MyAxiosInstance();
 
     const {id} = useParams()
     const [data,setData] = useState({})
+    const [own,setOwn] = useState(false)
     const goto = useNavigate()
+
 
    
     useEffect(()=>{
@@ -19,7 +22,12 @@ const ViewPost = ({ images }) => {
         axiosInstance.get(`getOnePost/${id}`).then((response)=>{
 
             console.log(response.data)
-            setData(response.data)
+              setData(response.data.data)
+              setOwn(response.data.own)
+
+        
+
+          
 
         })
 
@@ -31,6 +39,7 @@ const ViewPost = ({ images }) => {
   const [showPost, setShowPost] = useState(true)
   const [showLikes, setShowLikes] = useState(false)
   const [showComments, setShowComments] = useState(false)
+  const [showOptions, setShowOptions] = useState(false)
 
 
   
@@ -59,8 +68,8 @@ const ViewPost = ({ images }) => {
 
             <div className=''>
               <div className="bg-black shadow-2xl  overflow-hidden  border rounded-md mt-5">
-                <div className="p-4">
-                  <div className="flex items-center mb-2 cursor-pointer" onClick={()=>goto(`/${data.username}`)}>
+                <div className="px-4">
+                  {/* <div className="flex items-center mb-2 cursor-pointer" onClick={()=>goto(`/${data.username}`)}>
                     <div className="flex-shrink-0">
                       <img
                         src={data && IMG_CDN+data.picture}
@@ -71,7 +80,30 @@ const ViewPost = ({ images }) => {
                     <div className="ml-3">
                       <span className="font-semibold text-white">{data && data.username}</span>
                     </div>
-                  </div> 
+                  </div>  */}
+                  {/* Modified the class to "flex items-center" */}
+                   <div className="p-4 flex items-center"> 
+    <div className="flex-shrink-0">
+      <img
+       onClick={()=>goto(`/${data.username}`)}
+        src={data && IMG_CDN+data.profilePicture}
+        alt="User Profile"
+        className="w-8 h-8 rounded-full object-cover"
+      />
+    </div>
+    <div className="ml-3 flex-grow"  onClick={()=>goto(`/${data.username}`)}> 
+      <span className="font-semibold text-white">{data && data.username}</span>
+    </div>
+    {/* New button element */}
+    <button onClick={()=>setShowOptions(true)}
+       // Replace "handleButtonClick" with the function to be executed on button click
+      className="text-white px-4 py-2"
+    >
+       <FontAwesomeIcon icon={faEllipsis} style={{ color: "#ffffff", }} />
+    </button>
+  </div>
+
+
                   <img src={data && IMG_CDN+data.picture} alt="Post" className="w-full mb-4" />
                   <span>
                       <FontAwesomeIcon icon={faHeart} style={{ color: "#ffffff", }} size='xl' className='mr-4' />
@@ -102,6 +134,36 @@ const ViewPost = ({ images }) => {
         </div>
       )}
 
+      {/* Following Modal */}
+      {showOptions && (
+              <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+                <div className="bg-black p-8 rounded-lg w-80">
+                 
+                 {own ?
+
+                <button className="bg-red-600 hover:bg-red-700 mt-2 text-white font-semibold w-full rounded">
+                Delete Post
+                </button>
+                :
+
+                <button className="bg-red-600 hover:bg-red-700 text-white font-semibold w-full rounded">
+                Report Post
+                </button> 
+                }
+              
+                  
+                       
+ 
+               
+                  <button
+                    className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm w-full"
+                    onClick={()=>setShowOptions(false)}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
 
 
       {/* likes Modal */}

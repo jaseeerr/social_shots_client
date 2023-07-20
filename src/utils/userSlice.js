@@ -1,20 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 import jwt from "jsonwebtoken"
 import MyAxiosInstance from "./axios";
+import { useState } from "react";
+
 
 let data = localStorage.getItem('userToken')
-
 const axiosInstance = MyAxiosInstance()
 
-
-
+let data1
 let status
 if(data)
 {
-    axiosInstance.get('myData').then((response)=>{
-      
-        data = response.data
-    })
+    async function getdata()
+    {
+       
+        let response = await  axiosInstance.get('myData')
+        data1 = response.data
+    }
+    getdata()
+ 
     status = true
 }
 else
@@ -30,7 +34,7 @@ const userSlice = createSlice({
     initialState:{
        
         login:status,
-        userdata:data
+        userdata:data1
 
     },
     reducers:{
@@ -40,7 +44,6 @@ const userSlice = createSlice({
             state.login = action.payload
         },
         updateUserdata:(state,action)=>{
-           
             state.userdata = action.payload
         },
         

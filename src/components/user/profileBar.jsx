@@ -15,6 +15,14 @@ function ProfileBar() {
   }
 
 
+  const logout = () => {
+
+    localStorage.removeItem('userToken')
+
+    goto('/login')
+
+  }
+
 
   useEffect(()=>{
 
@@ -39,13 +47,13 @@ function ProfileBar() {
       <img
               src={dp && IMG_CDN+dp}
               alt="User Profile"
-              className="w-10 h-10 rounded-full"
+              className="w-10 h-10 rounded-full object-cover"
             />
             <p className='ml-3 mt-3 text-white text-sm'>{username && username}</p>
       </span>
             
          
-            <Link className='px-2 py-2 mb-2 text-blue-500 text-sm ml-8 hover:text-white'>Logout </Link>
+            <Link className='px-2 py-2 mb-2 text-blue-500 text-sm ml-8 hover:text-white' onClick={logout}>Logout </Link>
           </div>
 
 

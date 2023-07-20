@@ -53,6 +53,9 @@ axiosInstance.get('myData').then((response)=>{
     goto(`/${username}`)
   }
 
+
+
+  
   return (
    
   <>
@@ -177,7 +180,7 @@ axiosInstance.get('myData').then((response)=>{
             <img onClick={goProfile}
               src={dp && IMG_CDN+dp}
               alt="User Profile"
-              className="w-5 h-5 rounded-full"
+              className="w-5 h-5 rounded-full object-cover"
             />
      
         
@@ -248,7 +251,7 @@ axiosInstance.get('myData').then((response)=>{
             <img
               src={dp && IMG_CDN+dp}
               alt="User Profile"
-              className="w-8 h-8 rounded-full"
+              className="w-8 h-8 rounded-full object-cover"
             />
             <p className='px-2 py-2 text-white'>{username && username}</p>
         

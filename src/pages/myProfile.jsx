@@ -193,7 +193,7 @@ function MyProfile() {
   useEffect(() => {
 
     if (imageFile) {
-      const newFileName = `img${Date.now()}`;
+      const newFileName = `dp${id}`;
       const data = new FormData()
       data?.append("file", imageFile, newFileName)
       data?.append("upload_preset", "olx_img")
@@ -285,7 +285,7 @@ function MyProfile() {
 
     localStorage.removeItem('userToken')
 
-    location.href = "/login"
+    goto('/login')
 
   }
 
@@ -1010,9 +1010,18 @@ function MyProfile() {
                     {userdata.following.length != 0 ? userdata.following.map((follower, index) => {
                       return (
                         <Link to={`/${follower.username}`} onClick={()=>{setShowFollowingModal(false)}}>
-                         <span key={follower._id} className='flex py-2 max-h-20 overflow-y-auto'> 
-                          <img src={IMG_CDN+follower.dp} alt="" className='w-7 h-7 rounded-full mr-3' />
+                         <span key={follower._id} className='flex justify-between py-2 max-h-20 overflow-y-auto '> 
+                         <span className='flex py-2 max-h-20'>
+                         <img src={IMG_CDN+follower.dp} alt="" className='w-7 h-7 rounded-full mr-3' />
                           <p className='text-white'>{follower.username}</p>
+                         </span>
+                         
+                          <button onClick={()=>{
+
+                          }} className=" bg-blue-500 text-white h-7 mt-3 px-1 rounded-lg text-sm ">
+                     Following
+                   </button>
+                   
                           
                         </span>
 
