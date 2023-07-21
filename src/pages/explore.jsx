@@ -98,7 +98,7 @@ const Explore = () => {
                         className="rounded p-4 mb-2 text-center"
                       >
                         <span className='flex justify-center text-white '>
-                        <img src={IMG_CDN+result.dp} alt="" className='w-8 h-8 rounded-full text-center mr-3 mb-2' />
+                        <img src={IMG_CDN+result.dp} alt="" className='w-8 h-8 rounded-full text-center mr-3 mb-2 object-cover' />
                         <Link to={`/${result.username}`} >
                           {result.username}
                         </Link>

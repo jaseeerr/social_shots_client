@@ -5,6 +5,8 @@ import { faComment, faHeart, faXmark,faEllipsis, faArrowLeft } from '@fortawesom
 import MyAxiosInstance from '../utils/axios';
 import { IMG_CDN } from '../config/urls';
 import { useSelector } from 'react-redux';
+import { Toaster, toast } from 'react-hot-toast';
+
 
 const ViewPost = ({ images }) => {
     const axiosInstance = MyAxiosInstance();
@@ -14,6 +16,36 @@ const ViewPost = ({ images }) => {
     const [own,setOwn] = useState(false)
     const goto = useNavigate()
 
+
+    const reportPost = ()=>{
+
+      axiosInstance.get(`report/${id}`).then((response)=>{
+
+        if(response.data.success)
+        {
+          toast.success("POST REPORTED")
+        }
+        else
+        {
+          toast.error("Unknown error occurred")
+        }
+      })
+    }
+
+    const deletePost = ()=>{
+
+      axiosInstance.get(`deletepost/${id}`).then((response)=>{
+        if(response.data.success)
+        {
+          toast.success("POST DELETED")
+          goto(-1)
+        }
+        else
+        {
+          toast.error("Unknown error occurred")
+        }
+      })
+    }
 
    
     useEffect(()=>{
@@ -46,6 +78,7 @@ const ViewPost = ({ images }) => {
 
   return (
     <>
+     <Toaster />
       {/* Main post Modal */}
       {showPost && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" >
@@ -69,30 +102,18 @@ const ViewPost = ({ images }) => {
             <div className=''>
               <div className="bg-black shadow-2xl  overflow-hidden  border rounded-md mt-5">
                 <div className="px-4">
-                  {/* <div className="flex items-center mb-2 cursor-pointer" onClick={()=>goto(`/${data.username}`)}>
-                    <div className="flex-shrink-0">
-                      <img
-                        src={data && IMG_CDN+data.picture}
-                        alt="User Profile"
-                        className="w-9 h-9 rounded-full shadow-2xl"
-                      />
-                    </div>
-                    <div className="ml-3">
-                      <span className="font-semibold text-white">{data && data.username}</span>
-                    </div>
-                  </div>  */}
-                  {/* Modified the class to "flex items-center" */}
+                
                    <div className="p-4 flex items-center"> 
     <div className="flex-shrink-0">
       <img
        onClick={()=>goto(`/${data.username}`)}
         src={data && IMG_CDN+data.profilePicture}
         alt="User Profile"
-        className="w-8 h-8 rounded-full object-cover"
+        className="w-8 h-8 rounded-full object-cover cursor-pointer"
       />
     </div>
     <div className="ml-3 flex-grow"  onClick={()=>goto(`/${data.username}`)}> 
-      <span className="font-semibold text-white">{data && data.username}</span>
+      <span className="font-semibold text-white cursor-pointer">{data && data.username}</span>
     </div>
     {/* New button element */}
     <button onClick={()=>setShowOptions(true)}
@@ -134,19 +155,19 @@ const ViewPost = ({ images }) => {
         </div>
       )}
 
-      {/* Following Modal */}
+      {/* Options Modal */}
       {showOptions && (
               <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
                 <div className="bg-black p-8 rounded-lg w-80">
                  
                  {own ?
 
-                <button className="bg-red-600 hover:bg-red-700 mt-2 text-white font-semibold w-full rounded">
+                <button onClick={deletePost} className="bg-red-600 hover:bg-red-700 mt-2 text-white font-semibold w-full rounded">
                 Delete Post
                 </button>
                 :
 
-                <button className="bg-red-600 hover:bg-red-700 text-white font-semibold w-full rounded">
+                <button onClick={reportPost} className="bg-red-600 hover:bg-red-700 text-white font-semibold w-full rounded">
                 Report Post
                 </button> 
                 }

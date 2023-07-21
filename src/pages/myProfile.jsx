@@ -11,14 +11,15 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUserdata } from '../utils/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
+
 
 
 function MyProfile() {
 
-  const [bioBtn,setBioBtn] = useState(false)
-  const [newp,setNewp] = useState(null)
-  const [bload,setBload] = useState(false)
+  const [bioBtn, setBioBtn] = useState(false)
+  const [newp, setNewp] = useState(null)
+  const [bload, setBload] = useState(false)
   const sliceData = useSelector(store => store.userInfo.userdata)
   const dispatch = useDispatch()
   const [test, setTest] = useState(true)
@@ -44,13 +45,13 @@ function MyProfile() {
   const goto = useNavigate()
 
   const [userdata, setUserdata] = useState(null)
-  const [myData,setMyData] = useState({})
- 
+  const [myData, setMyData] = useState({})
+
 
   // buttons state
-  const [followBtn,setFollowBtn] = useState(false)
-  const [followingBtn,setFollowingBtn] = useState(false)
-  const [requestedBtn,setRequestedBtn] = useState(false)
+  const [followBtn, setFollowBtn] = useState(false)
+  const [followingBtn, setFollowingBtn] = useState(false)
+  const [requestedBtn, setRequestedBtn] = useState(false)
 
 
   const handleImageChange = (e) => {
@@ -69,49 +70,56 @@ function MyProfile() {
   async function getData() {
     try {
       setLoader(true);
-      
+
       const mydata = await axiosInstance.get('myData')
       setMyData(mydata)
-      
-      
-      axiosInstance.get(`profile/${id}`).then((dataResponse)=>{
+
+
+      axiosInstance.get(`profile/${id}`).then((dataResponse) => {
+
+
+        
 
         const data = dataResponse.data;
-      
-        console.log(data.data1)
+
+        console.log(data)
+      //  if(data.data1 == {})
+      if (Object.keys(data.data1).length === 0 && data.data1.constructor === Object)
+       {
+       
+        goto('/explore')
+        return
+       }
+    
 
         let arr = data.data1.followers
-        console.log(arr)
-        console.log(mydata.data._id)
+    
 
 
-       
-        for(let i=0;i<arr.length;i++)
-        {
-          if(data.data1.followers[i].uid == mydata.data._id)
-          {
-            console.log("BRUHHH")
+
+        for (let i = 0; i < arr.length; i++) {
+          if (data.data1.followers[i].uid == mydata.data._id) {
             setFollowingBtn(true)
             break;
           }
         }
-     
 
 
-      
-        
-        
-      
-       
-      
-    
-        axiosInstance.get(`posts/${id}`).then((data1Response)=>{
 
-          
+
+
+
+
+
+
+
+        axiosInstance.get(`posts/${id}`).then((data1Response) => {
+
+
           const data1 = data1Response.data;
-      
+
           data.data1.posts = data1;
-      
+
           setPosts(data1);
           setOwn(data.own);
           setUserdata(data.data1);
@@ -121,48 +129,63 @@ function MyProfile() {
           setBio(data?.data?.data1?.bio);
           setLoader(false);
 
+        }).then(()=>{
+
+         
+        
+
         })
-       
-  
+
+    
+
+
 
       })
-     
+
     } catch (error) {
       console.error('Error occurred while fetching data:', error);
       // Handle the error accordingly
       setLoader(false);
     }
   }
-  
 
 
-  async function follow1(){
-   
+
+  async function follow1() {
+
     const response = await axiosInstance.get(`follow/${id}`)
-   console.log(response.data.data)
 
-   userdata.followers.push(response.data.data)
-   console.log("FOLLOW UPATE");
-    setFollowingBtn(true)
-   
+    if (response.data.success) {
+      userdata.followers.push(response.data.data)
+      setFollowingBtn(true)
+    }
+    else if (response.data.requested) {
+      setRequestedBtn(true)
+      setFollowingBtn(false)
+    }
+
+
+
 
 
   }
 
-  async function unfollow1(){
+  async function unfollow1() {
     setFollowingBtn(false);
-   axiosInstance.get(`unfollow/${id}`).then((data)=>{
-    console.log("unfollow update")
-    console.log(data.data.data1);
-    data.data.data1.posts = posts
-    setUserdata(data.data.data1)
-   
-    
-   })
-    
-   
-   
+    setRequestedBtn(false)
+    axiosInstance.get(`unfollow/${id}`).then((data) => {
+     
+      data.data.data1.posts = posts
+      setUserdata(data.data.data1)
+
+
+    })
+
+
+
   }
+
+
 
 
 
@@ -181,10 +204,10 @@ function MyProfile() {
     }
     else {
 
-      getData() 
-  
+      getData()
+
     }
-    
+
   }, [])
 
 
@@ -204,7 +227,7 @@ function MyProfile() {
         data
       ).then((response) => {
 
-        
+
 
         axiosInstance.get(`updatedp/${response.data.public_id}`).then((res) => {
 
@@ -227,7 +250,7 @@ function MyProfile() {
   const [showUsernameModal, setShowUsernameModal] = useState(false)
   const [showPhoneModal, setShowPhoneModal] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
-  const [showAcTypeModal,setShowAcTypeModal] = useState(false)
+  const [showAcTypeModal, setShowAcTypeModal] = useState(false)
 
 
 
@@ -276,7 +299,7 @@ function MyProfile() {
     setShowFollowingModal(false);
     setShowEditModal(false);
     setShowUsernameModal(false);
-    
+
 
   };
 
@@ -343,14 +366,20 @@ function MyProfile() {
                   <div className="flex items-center">
                     <h2 className="text-2xl font-semibold">{userdata?.username}</h2>
                     {followingBtn ?
-                    <button onClick={()=>unfollow1()} className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm hidden md:block lg:block" >
-                    Following
-                  </button>
-                  :
-                  <button onClick={()=>follow1()} className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm hidden md:block lg:block" >
-                      Follow
-                    </button>
-                     }
+                      <button onClick={() => unfollow1()} className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm hidden md:block lg:block" >
+                        Following
+                      </button>
+                      :
+                      requestedBtn
+                        ?
+                        <button onClick={() => unfollow1()} className="ml-4 bg-black border font-semibold text-white px-2 py-1 rounded-lg text-sm hidden md:block lg:block" >
+                          Requested
+                        </button>
+                        :
+                        <button onClick={() => follow1()} className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm hidden md:block lg:block" >
+                          Follow
+                        </button>
+                    }
                     {/* <button onClick={()=>follow1()} className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm hidden md:block lg:block" >
                       Follow
                     </button> */}
@@ -380,15 +409,22 @@ function MyProfile() {
                   </span>
                   :
                   <span className='sm:hidden'>
-                    {followingBtn ? 
-                     <button onClick={unfollow1} className="mt-2 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm mr-2">
-                     Following
-                   </button>
-                   :
-                   <button onClick={follow1} className="mt-2 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm mr-2">
-                   Follow
-                 </button>}
-                   
+                    {followingBtn ?
+                      <button onClick={unfollow1} className="mt-2 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm mr-2">
+                        Following
+                      </button>
+                      :
+                      requestedBtn
+                        ?
+                        <button onClick={unfollow1} className="mt-2 bg-black font-semibold text-white px-2 py-1 rounded-lg text-sm mr-2">
+                          Requested
+                        </button>
+                        :
+                        <button onClick={follow1} className="mt-2 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm mr-2">
+                          Follow
+                        </button>
+                    }
+
                     <button className="mt-2 sm:ml-4 text-white px-2 py-1 rounded-lg text-sm">
                       <FontAwesomeIcon icon={faEllipsis} style={{ color: "#ffffff", }} />
                     </button>
@@ -417,7 +453,7 @@ function MyProfile() {
             <div className="mt-8 sm:border-t ">
               <h3 className="text-2xl font-semibold mb-4">Photos</h3>
               <div className="grid grid-cols-3 gap-4" >
-                {posts.length !== 0 ? (
+                {posts.length !== 0 && own || posts.length!==0 && followingBtn ||posts.length!=0 && !userdata.private? (
                   // Render posts
                   posts.map((post, index) => (
                     <Link to={`/viewPost/${post._id}`}>
@@ -431,20 +467,36 @@ function MyProfile() {
                     </Link>
 
                   ))
-                ) : (
-                  // Render placeholder image and text
-                  <div className="flex items-center justify-center mt-20  ">
-                    <span className=''>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="80">
-                        <path
-                          d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM12 10.5858L14.8284 7.75736L16.2426 9.17157L13.4142 12L16.2426 14.8284L14.8284 16.2426L12 13.4142L9.17157 16.2426L7.75736 14.8284L10.5858 12L7.75736 9.17157L9.17157 7.75736L12 10.5858Z"
-                          fill="rgba(255,255,255,1)"
-                        ></path>
-                      </svg>
-                      <p className="text-white mt-2">NO POSTS YET!</p>
-                    </span>
-                  </div>
-                )}
+                ) : userdata?.private && !followingBtn && !own ?
+                  <>
+                    <div className="flex items-center justify-center mt-20  ">
+                      <span className=''>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="80">
+                          <path
+                            d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM12 10.5858L14.8284 7.75736L16.2426 9.17157L13.4142 12L16.2426 14.8284L14.8284 16.2426L12 13.4142L9.17157 16.2426L7.75736 14.8284L10.5858 12L7.75736 9.17157L9.17157 7.75736L12 10.5858Z"
+                            fill="rgba(255,255,255,1)"
+                          ></path>
+                        </svg>
+                        <p className="text-white mt-2">Private account</p>
+                        <small>Follow to see their posts.</small>
+                      </span>
+                    </div>
+                  </>
+                  : 
+                  (
+                    // Render placeholder image and text
+                    <div className="flex items-center justify-center mt-20  ">
+                      <span className=''>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="80">
+                          <path
+                            d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM12 10.5858L14.8284 7.75736L16.2426 9.17157L13.4142 12L16.2426 14.8284L14.8284 16.2426L12 13.4142L9.17157 16.2426L7.75736 14.8284L10.5858 12L7.75736 9.17157L9.17157 7.75736L12 10.5858Z"
+                            fill="rgba(255,255,255,1)"
+                          ></path>
+                        </svg>
+                        <p className="text-white mt-2">NO POSTS YET!</p>
+                      </span>
+                    </div>
+                  )}
               </div>
             </div>
 
@@ -494,14 +546,14 @@ function MyProfile() {
 
 
                     <span>
-                      <div className="flex mb-3"  onClick={()=>{
-                            setShowEmailModal(true)
-                          }}>
+                      <div className="flex mb-3" onClick={() => {
+                        setShowEmailModal(true)
+                      }}>
                         <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
                           <svg className="w-4 h-4 text-white dark:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM20 7.23792L12.0718 14.338L4 7.21594V19H20V7.23792ZM4.51146 5L12.0619 11.662L19.501 5H4.51146Z" fill="rgba(255,255,255,1)"></path></svg>                                 </span>
                         <input
-                         
-                         disabled type="text" id="website-admin" className="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={userdata.email} />
+
+                          disabled type="text" id="website-admin" className="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={userdata.email} />
                       </div>
                     </span>
 
@@ -511,51 +563,47 @@ function MyProfile() {
                         onChange={(e) => {
 
                           setBio(e.target.value)
-                          if(e.target.value)
-                          {
+                          if (e.target.value) {
                             setBioBtn(true)
                           }
-                          else
-                          {
+                          else {
                             setBioBtn(false)
                           }
                         }}
                         style={{ resize: "none" }} id="bio" rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={userdata.bio} maxlength="120"></textarea>
                     </span>
-                    
+
                     {bioBtn ?
-                    <button 
-                    onClick={()=>{
-                       const bio = document.getElementById('bio').value
-                      axiosInstance.get(`updatebio/${bio}`).then((response)=>{
+                      <button
+                        onClick={() => {
+                          const bio = document.getElementById('bio').value
+                          axiosInstance.get(`updatebio/${bio}`).then((response) => {
 
-                        if(response.data.success)
-                        {
-                          toast.success("UPDATED")
-                          getData() 
-                        }
-                        else
-                        {
-                          toast.error("ERROR OCCURRED")
-                        }
-                      })
+                            if (response.data.success) {
+                              toast.success("UPDATED")
+                              getData()
+                            }
+                            else {
+                              toast.error("ERROR OCCURRED")
+                            }
+                          })
 
 
-                    }}
-                    className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"> Update Bio</button>
-                    :
-                    null
-                  }
+                        }}
+                        className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"> Update Bio</button>
+                      :
+                      null
+                    }
 
                     {userdata.private ?
                       <span className='flex mt-3'>
                         <div className="flex items-center">
                           <input
-                           onChange={()=>{
-                           
-                            setShowAcTypeModal(true)
-                          }}
-                          id="checked-checkbox" checked type="checkbox" value="1" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                            onChange={() => {
+
+                              setShowAcTypeModal(true)
+                            }}
+                            id="checked-checkbox" checked type="checkbox" value="1" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                           <label for="checked-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Private Account</label>
                         </div>
                       </span>
@@ -563,11 +611,11 @@ function MyProfile() {
                       <span className='flex mt-3'>
                         <div className="flex items-center">
                           <input
-                          onChange={()=>{
-                        
-                            setShowAcTypeModal(true)
-                          }}
-                          id="checked-checkbox" type="checkbox"  value="0" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                            onChange={() => {
+
+                              setShowAcTypeModal(true)
+                            }}
+                            id="checked-checkbox" type="checkbox" value="0" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                           <label for="checked-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Private Account</label>
                         </div>
                       </span>
@@ -575,7 +623,7 @@ function MyProfile() {
 
 
                   </span>
-               
+
 
                   <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
@@ -587,46 +635,43 @@ function MyProfile() {
               </div>
             )}
 
-             {/* ACCOUNT TYPE Modal */}
-             {showAcTypeModal && (
+            {/* ACCOUNT TYPE Modal */}
+            {showAcTypeModal && (
               <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" >
                 <div className="bg-black p-8 rounded-lg w-80">
                   <h2 className="text-xl font-semibold mb-2 text-white"></h2>
                   <span className=''>
-                   {userdata.private ? "Confirm to change your account type to public." : "Confirm to change your account type to private."}
+                    {userdata.private ? "Confirm to change your account type to public." : "Confirm to change your account type to private."}
                   </span>
-                <br />
-                <button
-                onClick={()=>{
-                  let x = 0
-                  if(!userdata.private)
-                  {
-                     x = 1
-                  }
+                  <br />
+                  <button
+                    onClick={() => {
+                      let x = 0
+                      if (!userdata.private) {
+                        x = 1
+                      }
 
-                  axiosInstance.get(`updateactype/${x}`).then((response)=>{
+                      axiosInstance.get(`updateactype/${x}`).then((response) => {
 
-                    if(response.data.success)
-                    {
-                      setShowAcTypeModal(false)
-                      toast.success("UPDATED")
-                      getData()
-                     
-                    }
-                    else
-                    {
-                      toast.error("UNKNOWN ERROR OCCURRED")
-                    }
-                  })
+                        if (response.data.success) {
+                          setShowAcTypeModal(false)
+                          toast.success("UPDATED")
+                          getData()
 
-                }}
-                 className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm mr-2"
-                >
-                  Confirm
-                </button>
+                        }
+                        else {
+                          toast.error("UNKNOWN ERROR OCCURRED")
+                        }
+                      })
+
+                    }}
+                    className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm mr-2"
+                  >
+                    Confirm
+                  </button>
                   <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
-                    onClick={()=>{
+                    onClick={() => {
                       setShowAcTypeModal(false)
                     }}
                   >
@@ -637,68 +682,63 @@ function MyProfile() {
             )}
 
 
-             {/* Email edit Modal */}
-             {showEmailModal && (
+            {/* Email edit Modal */}
+            {showEmailModal && (
               <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" >
                 <div className="bg-black p-8 rounded-lg w-80">
                   <h2 className="text-xl font-semibold mb-2 text-white">Edit Email</h2>
                   <span className=''>
-                    
+
                   </span>
                   <input
-                      onChange={(e) => {}}
-                      type="email" id="email" className=" rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={userdata.email ? userdata.email : "Your Number Without Country Code"} />
-                 
+                    onChange={(e) => { }}
+                    type="email" id="email" className=" rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={userdata.email ? userdata.email : "Your Number Without Country Code"} />
+
 
                   <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
-                    onClick={()=>{setShowEmailModal(false)}}
+                    onClick={() => { setShowEmailModal(false) }}
                   >
                     Close
                   </button>
-                   <button
-                   onClick={()=>{
-                    setBload(true)
-                    const email = document.getElementById('email')
-                    const value = document.getElementById('email').value
-                    if(value==userdata.email)
-                    {
-                      toast.error("Enter email is same as the current one.")
-                    }
-                    else if(email.checkValidity())
-                    {
-                      setErr(false)
-                      axiosInstance.get(`update_email/${value}`).then((response)=>{
+                  <button
+                    onClick={() => {
+                      setBload(true)
+                      const email = document.getElementById('email')
+                      const value = document.getElementById('email').value
+                      if (value == userdata.email) {
+                        toast.error("Enter email is same as the current one.")
+                      }
+                      else if (email.checkValidity()) {
+                        setErr(false)
+                        axiosInstance.get(`update_email/${value}`).then((response) => {
 
-                        setBload(false)
-                        if(response.data.success)
-                        {
-                          toast.success("Verification mail sent to your new mail.")
-                          getData()
-                        }
-                        else
-                        {
-                          toast.error("UNKNOWN ERROR OCCURED")
-                        }
-                        setShowEmailModal(false)
+                          setBload(false)
+                          if (response.data.success) {
+                            toast.success("Verification mail sent to your new mail.")
+                            getData()
+                          }
+                          else {
+                            toast.error("UNKNOWN ERROR OCCURED")
+                          }
+                          setShowEmailModal(false)
 
-                      })
+                        })
+                      }
+                      else {
+                        setErr(true)
+                      }
+                    }}
+                    className='mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm ml-2'>
+
+                    {bload ?
+                      <svg width="24" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-40 -mt-1 text-center"><g><circle cx="12" cy="3" r="1"><animate id="spinner_7Z73" begin="0;spinner_tKsu.end-0.5s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="16.50" cy="4.21" r="1"><animate id="spinner_Wd87" begin="spinner_7Z73.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="7.50" cy="4.21" r="1"><animate id="spinner_tKsu" begin="spinner_9Qlc.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="19.79" cy="7.50" r="1"><animate id="spinner_lMMO" begin="spinner_Wd87.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="4.21" cy="7.50" r="1"><animate id="spinner_9Qlc" begin="spinner_Khxv.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="21.00" cy="12.00" r="1"><animate id="spinner_5L9t" begin="spinner_lMMO.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="3.00" cy="12.00" r="1"><animate id="spinner_Khxv" begin="spinner_ld6P.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="19.79" cy="16.50" r="1"><animate id="spinner_BfTD" begin="spinner_5L9t.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="4.21" cy="16.50" r="1"><animate id="spinner_ld6P" begin="spinner_XyBs.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="16.50" cy="19.79" r="1"><animate id="spinner_7gAK" begin="spinner_BfTD.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="7.50" cy="19.79" r="1"><animate id="spinner_XyBs" begin="spinner_HiSl.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="12" cy="21" r="1"><animate id="spinner_HiSl" begin="spinner_7gAK.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><animateTransform attributeName="transform" type="rotate" dur="6s" values="360 12 12;0 12 12" repeatCount="indefinite" /></g></svg>
+                      :
+                      "Save Changes"
                     }
-                    else
-                    {
-                      setErr(true)
-                    }
-                   }}
-                   className='mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm ml-2'>
-                    
-                    {bload ? 
-                         <svg width="24" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-40 -mt-1 text-center"><g><circle cx="12" cy="3" r="1"><animate id="spinner_7Z73" begin="0;spinner_tKsu.end-0.5s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="16.50" cy="4.21" r="1"><animate id="spinner_Wd87" begin="spinner_7Z73.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="7.50" cy="4.21" r="1"><animate id="spinner_tKsu" begin="spinner_9Qlc.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="19.79" cy="7.50" r="1"><animate id="spinner_lMMO" begin="spinner_Wd87.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="4.21" cy="7.50" r="1"><animate id="spinner_9Qlc" begin="spinner_Khxv.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="21.00" cy="12.00" r="1"><animate id="spinner_5L9t" begin="spinner_lMMO.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="3.00" cy="12.00" r="1"><animate id="spinner_Khxv" begin="spinner_ld6P.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="19.79" cy="16.50" r="1"><animate id="spinner_BfTD" begin="spinner_5L9t.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="4.21" cy="16.50" r="1"><animate id="spinner_ld6P" begin="spinner_XyBs.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="16.50" cy="19.79" r="1"><animate id="spinner_7gAK" begin="spinner_BfTD.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="7.50" cy="19.79" r="1"><animate id="spinner_XyBs" begin="spinner_HiSl.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="12" cy="21" r="1"><animate id="spinner_HiSl" begin="spinner_7gAK.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><animateTransform attributeName="transform" type="rotate" dur="6s" values="360 12 12;0 12 12" repeatCount="indefinite"/></g></svg>
-                           :
-                         "Save Changes"
-                  }
-                    
-                    
-                    </button>
+
+
+                  </button>
                 </div>
               </div>
             )}
@@ -720,28 +760,28 @@ function MyProfile() {
                     <input
                       onChange={(e) => {
                         setPass(false)
-                         
-                      
-                         
-
-                          axiosInstance.get(`checkusername/${e.target.value.trim()}`).then((response) => {
-
-                            setErr(response.data.badname)
-  
-                            if (!response.data.badname) {
-                              setUsername(e.target.value.trim())
-  
-                              setPass(true)
-                            }
-                            else {
-                              setPass(false)
-                            }
-  
-                          })
-                       
 
 
-                       
+
+
+                        axiosInstance.get(`checkusername/${e.target.value.trim()}`).then((response) => {
+
+                          setErr(response.data.badname)
+
+                          if (!response.data.badname) {
+                            setUsername(e.target.value.trim())
+
+                            setPass(true)
+                          }
+                          else {
+                            setPass(false)
+                          }
+
+                        })
+
+
+
+
 
 
 
@@ -767,7 +807,12 @@ function MyProfile() {
 
                           if (response.data.success) {
                             toast.success("Upated")
-                            getData()
+                            const data1 = userdata
+                            data1.username = username
+                            setUserdata(data1)
+                            // getData()
+                            // goto(`/${username}`)
+                            location.href = `/${username}`
                             handleCloseModal()
                           }
                           else {
@@ -802,22 +847,21 @@ function MyProfile() {
                     <input
                       onChange={(e) => {
                         setPass(false)
-                        if(e.target.value==userdata.phone)
-                        {
+                        if (e.target.value == userdata.phone) {
                           setOtpSend(false)
                         }
-                       else if (e.target.value.length == 10 && !isNaN(e.target.value)) {
+                        else if (e.target.value.length == 10 && !isNaN(e.target.value)) {
                           setOtpSend(true)
                           setErr(false)
 
                         }
-                       
-                        
+
+
                         else {
                           setErr(true)
                         }
 
-                      
+
 
 
 
@@ -839,20 +883,18 @@ function MyProfile() {
                     <p
                       onClick={() => {
                         const phone = document.getElementById('phone').value
-                      setNewp(phone)
-                        axiosInstance.get(`sentotp/${phone}`).then((response)=>{
+                        setNewp(phone)
+                        axiosInstance.get(`sentotp/${phone}`).then((response) => {
 
-                          if(response.data.success)
-                          {
+                          if (response.data.success) {
                             toast.success("OTP SENT")
                           }
-                          else
-                          {
+                          else {
                             toast.error("UNKNOWN ERROR OCCURRED")
                           }
 
                         })
-                        
+
 
 
 
@@ -861,105 +903,73 @@ function MyProfile() {
                         setOtpSend(false)
                       }}
                       className="mt-4 mr-3 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm text-center cursor-pointer">
-                      
-                      { bload ? 
-                                                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="ml-24"><g><circle cx="12" cy="3" r="1"><animate id="spinner_7Z73" begin="0;spinner_tKsu.end-0.5s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="16.50" cy="4.21" r="1"><animate id="spinner_Wd87" begin="spinner_7Z73.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="7.50" cy="4.21" r="1"><animate id="spinner_tKsu" begin="spinner_9Qlc.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="19.79" cy="7.50" r="1"><animate id="spinner_lMMO" begin="spinner_Wd87.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="4.21" cy="7.50" r="1"><animate id="spinner_9Qlc" begin="spinner_Khxv.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="21.00" cy="12.00" r="1"><animate id="spinner_5L9t" begin="spinner_lMMO.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="3.00" cy="12.00" r="1"><animate id="spinner_Khxv" begin="spinner_ld6P.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="19.79" cy="16.50" r="1"><animate id="spinner_BfTD" begin="spinner_5L9t.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="4.21" cy="16.50" r="1"><animate id="spinner_ld6P" begin="spinner_XyBs.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="16.50" cy="19.79" r="1"><animate id="spinner_7gAK" begin="spinner_BfTD.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="7.50" cy="19.79" r="1"><animate id="spinner_XyBs" begin="spinner_HiSl.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="12" cy="21" r="1"><animate id="spinner_HiSl" begin="spinner_7gAK.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><animateTransform attributeName="transform" type="rotate" dur="6s" values="360 12 12;0 12 12" repeatCount="indefinite"/></g></svg>
-                         :
-                         "Sent OTP"
+
+                      {bload ?
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="ml-24"><g><circle cx="12" cy="3" r="1"><animate id="spinner_7Z73" begin="0;spinner_tKsu.end-0.5s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="16.50" cy="4.21" r="1"><animate id="spinner_Wd87" begin="spinner_7Z73.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="7.50" cy="4.21" r="1"><animate id="spinner_tKsu" begin="spinner_9Qlc.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="19.79" cy="7.50" r="1"><animate id="spinner_lMMO" begin="spinner_Wd87.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="4.21" cy="7.50" r="1"><animate id="spinner_9Qlc" begin="spinner_Khxv.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="21.00" cy="12.00" r="1"><animate id="spinner_5L9t" begin="spinner_lMMO.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="3.00" cy="12.00" r="1"><animate id="spinner_Khxv" begin="spinner_ld6P.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="19.79" cy="16.50" r="1"><animate id="spinner_BfTD" begin="spinner_5L9t.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="4.21" cy="16.50" r="1"><animate id="spinner_ld6P" begin="spinner_XyBs.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="16.50" cy="19.79" r="1"><animate id="spinner_7gAK" begin="spinner_BfTD.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="7.50" cy="19.79" r="1"><animate id="spinner_XyBs" begin="spinner_HiSl.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="12" cy="21" r="1"><animate id="spinner_HiSl" begin="spinner_7gAK.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><animateTransform attributeName="transform" type="rotate" dur="6s" values="360 12 12;0 12 12" repeatCount="indefinite" /></g></svg>
+                        :
+                        "Sent OTP"
                       }
 
-                       
-                       
-                       
-                       
-                        </p>
+
+
+
+
+                    </p>
                     :
                     null}
 
                   {verifyBtn ?
                     <p
-                    className="mt-4 mr-3 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm text-center cursor-pointer"
-                    onClick={()=>{
+                      className="mt-4 mr-3 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm text-center cursor-pointer"
+                      onClick={() => {
 
-                      const otp = document.getElementById('otp').value
-                      setBload(true)
+                        const otp = document.getElementById('otp').value
+                        setBload(true)
 
-                      axiosInstance.get(`verifyotp?phone=${newp}&otp=${otp}`).then((response)=>{
+                        axiosInstance.get(`verifyotp?phone=${newp}&otp=${otp}`).then((response) => {
 
-                        setBload(false)
-                        if(response.data.success)
-                        {
-                          const data = userdata
-                          data.phone = newp
-                          setUserdata(data)
-                          toast.success("OTP VERIFIED")
-                          setShowPhoneModal(false)
-                          setErr(false)
-                        }
-                        else
-                        {
-                          toast.error("COULDN'T VERIFY OTP")
-                        }
-                        // setBload(false)
-                      })
+                          setBload(false)
+                          if (response.data.success) {
+                            const data = userdata
+                            data.phone = newp
+                            setUserdata(data)
+                            toast.success("OTP VERIFIED")
+                            setShowPhoneModal(false)
+                            setErr(false)
+                          }
+                          else {
+                            toast.error("COULDN'T VERIFY OTP")
+                          }
+                          // setBload(false)
+                        })
 
-                    }}
-                      >
-                        {bload ? 
-                               <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="ml-24"><g><circle cx="12" cy="3" r="1"><animate id="spinner_7Z73" begin="0;spinner_tKsu.end-0.5s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="16.50" cy="4.21" r="1"><animate id="spinner_Wd87" begin="spinner_7Z73.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="7.50" cy="4.21" r="1"><animate id="spinner_tKsu" begin="spinner_9Qlc.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="19.79" cy="7.50" r="1"><animate id="spinner_lMMO" begin="spinner_Wd87.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="4.21" cy="7.50" r="1"><animate id="spinner_9Qlc" begin="spinner_Khxv.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="21.00" cy="12.00" r="1"><animate id="spinner_5L9t" begin="spinner_lMMO.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="3.00" cy="12.00" r="1"><animate id="spinner_Khxv" begin="spinner_ld6P.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="19.79" cy="16.50" r="1"><animate id="spinner_BfTD" begin="spinner_5L9t.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="4.21" cy="16.50" r="1"><animate id="spinner_ld6P" begin="spinner_XyBs.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="16.50" cy="19.79" r="1"><animate id="spinner_7gAK" begin="spinner_BfTD.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="7.50" cy="19.79" r="1"><animate id="spinner_XyBs" begin="spinner_HiSl.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><circle cx="12" cy="21" r="1"><animate id="spinner_HiSl" begin="spinner_7gAK.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73"/></circle><animateTransform attributeName="transform" type="rotate" dur="6s" values="360 12 12;0 12 12" repeatCount="indefinite"/></g></svg>
-                           :
-                          "Verify OTP"
+                      }}
+                    >
+                      {bload ?
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="ml-24"><g><circle cx="12" cy="3" r="1"><animate id="spinner_7Z73" begin="0;spinner_tKsu.end-0.5s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="16.50" cy="4.21" r="1"><animate id="spinner_Wd87" begin="spinner_7Z73.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="7.50" cy="4.21" r="1"><animate id="spinner_tKsu" begin="spinner_9Qlc.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="19.79" cy="7.50" r="1"><animate id="spinner_lMMO" begin="spinner_Wd87.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="4.21" cy="7.50" r="1"><animate id="spinner_9Qlc" begin="spinner_Khxv.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="21.00" cy="12.00" r="1"><animate id="spinner_5L9t" begin="spinner_lMMO.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="3.00" cy="12.00" r="1"><animate id="spinner_Khxv" begin="spinner_ld6P.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="19.79" cy="16.50" r="1"><animate id="spinner_BfTD" begin="spinner_5L9t.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="4.21" cy="16.50" r="1"><animate id="spinner_ld6P" begin="spinner_XyBs.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="16.50" cy="19.79" r="1"><animate id="spinner_7gAK" begin="spinner_BfTD.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="7.50" cy="19.79" r="1"><animate id="spinner_XyBs" begin="spinner_HiSl.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><circle cx="12" cy="21" r="1"><animate id="spinner_HiSl" begin="spinner_7gAK.begin+0.1s" attributeName="r" calcMode="spline" dur="0.6s" values="1;2;1" keySplines=".27,.42,.37,.99;.53,0,.61,.73" /></circle><animateTransform attributeName="transform" type="rotate" dur="6s" values="360 12 12;0 12 12" repeatCount="indefinite" /></g></svg>
+                        :
+                        "Verify OTP"
                       }
-                        
-                       
-                        
-                        
-                        </p>
+
+
+
+
+                    </p>
                     :
                     null}
 
 
 
                   {err ? <p className='text-red-500'>Invalid input.</p> : null}
-                  {/* {!pass
-                       ?
-                         <button disabled
-                    className="mt-4 mr-3 bg-blue-500 text-white px-2 py-1 rounded-lg opacity-50 text-sm disabled cursor-not-allowed"
-                    >
-                    Save Changes
-                  </button>
-                   :
-                   <button
-                   className="mt-4 mr-3 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
-                   onClick={()=>{
-
-                       axiosInstance.get(`updateusername/${username}`).then((response)=>{
-
-                        console.log(response)
-
-                        if(response.data.success)
-                        {
-                          toast.success("Upated")
-                          getData()
-                          handleCloseModal()
-                        }
-                        else
-                        {
-                          toast.error("Error!")
-                          handleCloseModal()
-                        }
-                       })
-                   }}>
-                   Save Changes
-                 </button>} */}
+          
 
 
                   <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
-                    onClick={() =>{
+                    onClick={() => {
                       setVerifyBtn(false)
                       setShowPhoneModal(false)
-                    } }
+                    }}
                   >
                     Close
                   </button>
@@ -978,19 +988,57 @@ function MyProfile() {
                   <h2 className="text-xl font-semibold mb-2 text-white">Followers</h2>
                   <span className=''>
                     {userdata.followers.length != 0 ? userdata.followers.map((follower, index) => {
-                      return ( 
-                       <Link to={`/${follower.username}`} onClick={handleCloseModal}>
-                        <span key={follower._id} className='flex py-2 max-h-20 overflow-y-auto'> 
-                          <img src={IMG_CDN+follower.dp} alt="" className='w-7 h-7 rounded-full mr-3' />
-                          <p className='text-white'>{follower.username}</p>
+                      return (
+                        <span key={follower._id} className='flex justify-between py-2 max-h-20 overflow-y-auto'>
+                          <span className='flex' onClick={() => {
+                            goto(`/${follower.username}`)
+                            onClick = { handleCloseModal }
+                          }}>
+                            <img src={IMG_CDN + follower.dp} alt="" className='w-7 h-7 rounded-full mr-3 object-cover' />
+                            <p className='text-white'>{follower.username}</p>
+                          </span>
+
+                          {own ?
+
+
+                            <button id={`${follower._id}`} onClick={() => {
+                              axiosInstance.get(`removefollower/${follower._id}`).then((response) => {
+
+                                if (response.data.success) {
+                                  const data = userdata.following.filter((x) => {
+                                    return x.username != follower.username
+                                  })
+
+                                  document.getElementById(`${follower._id}`).style.display = "none"
+                                  toast.success(`Unfollowed ${followers.username}`)
+
+                                  const data1 = userdata
+                                  data1.following = data
+                                  setUserdata(data1)
+                                
+                                }
+                              })
+                            }} className="bg-black text-white mr-10 border-white">
+                              <FontAwesomeIcon icon={faXmark} style={{ color: "#ffffff", }} />
+                            </button>
+
+                            :
+
+
+                            null
+                          }
+
+
+
+
+
                         </span>
-                       </Link>
 
 
                       )
                     }) : <p className='text-white'>You don't have any followers</p>}
                   </span>
-               
+
                   <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
                     onClick={handleCloseModal}
@@ -1007,31 +1055,56 @@ function MyProfile() {
                 <div className="bg-black p-8 rounded-lg w-80">
                   <h2 className="text-xl font-semibold mb-2 text-white">Following</h2>
                   <span >
-                    {userdata.following.length != 0 ? userdata.following.map((follower, index) => {
+                    {userdata.following.length != 0 ? userdata.following.map((follower) => {
+                      let rm =0
                       return (
-                        <Link to={`/${follower.username}`} onClick={()=>{setShowFollowingModal(false)}}>
-                         <span key={follower._id} className='flex justify-between py-2 max-h-20 overflow-y-auto '> 
-                         <span className='flex py-2 max-h-20'>
-                         <img src={IMG_CDN+follower.dp} alt="" className='w-7 h-7 rounded-full mr-3' />
-                          <p className='text-white'>{follower.username}</p>
-                         </span>
-                         
-                          <button onClick={()=>{
+                        <span key={follower._id} className='flex justify-between py-2 max-h-20 overflow-y-auto '>
+                          <span className='flex py-2 max-h-20'>
+                            <img onClick={() => goto(`/${follower.username}`)} src={IMG_CDN + follower.dp} alt="" className='w-7 h-7 rounded-full mr-3 object-cover' />
+                            <p onClick={() => goto(`/${follower.username}`)} className='text-white'>{follower.username}</p>
+                          </span>
 
-                          }} className=" bg-blue-500 text-white h-7 mt-3 px-1 rounded-lg text-sm ">
-                     Following
-                   </button>
-                   
-                          
+                          {own ?
+
+
+                            <button id={`${follower.username}`} onClick={() => {
+                              axiosInstance.get(`unfollow/${follower.username}`).then((response) => {
+
+                                if (response.data.success) {
+                                  const data = userdata.following.filter((x) => {
+                                    return x.username != follower.username
+                                  })
+
+                                  // document.getElementById(`${follower.username}`).style.display = "none"
+                                  toast.success(`Unfollowed ${follower.username}`)
+
+                                  const data1 = userdata
+                                  data1.following = data
+                                  setUserdata(data1)
+                                 
+                                }
+                              })
+                            }} className="bg-black text-white mr-10 border-white">
+                              <FontAwesomeIcon icon={faXmark} style={{ color: "#ffffff", }} />
+                            </button>
+
+                            :
+
+
+                            null
+                          }
+
+
+
                         </span>
 
-                        </Link>
-                       
+
+
 
                       )
                     }) : <p className='text-white'>You're not following anyone</p>}
                   </span>
-               
+
                   <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
                     onClick={handleCloseModal}
