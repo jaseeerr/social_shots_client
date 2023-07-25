@@ -71,7 +71,7 @@ const StoryModal = () => {
               <div className="overflow-hidden">
                 <div className="flex transition-transform duration-300 ease-in-out -translate-x-full " style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
                   {images.map((image, index) => (
-                    <div key={index} className="w-full flex-shrink-0 relative">
+                    <div key={index} className="w-full flex-shrink-0 relative ">
                       <img src={image} alt={`Slide ${index + 1}`} className="w-full h-auto" />
 
                       {/* User Profile Picture */}

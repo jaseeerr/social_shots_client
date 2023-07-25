@@ -1,11 +1,12 @@
-import React, { useState } from "react"
-import { useFormik } from "formik"
+import React, { useState } from "react";
+import { useFormik } from "formik";
 import MyAxiosInstance from '../utils/axios';
-import toast, {Toaster} from 'react-hot-toast'
+import toast, {Toaster} from 'react-hot-toast';
 import { Link, useNavigate } from "react-router-dom";
-import logoImage from '../../public/assets/LOGOBig.png'; // Replace with the actual path to your logo image
-import logoRec from '../../public/assets/LOGO-REC1.png'; // Replace with the actual path to your logo image
+import logoImage from '../../public/assets/LOGOBig.png';
 import { useSelector } from "react-redux";
+import { SignInWithGoogle } from "../utils/firebase1";
+
 
 
 const Login = ()=>{
@@ -18,7 +19,55 @@ const Login = ()=>{
 
     const axiosInstance = MyAxiosInstance();
 
+    const handleGoogle = async ()=>{
+
+      const login  = await SignInWithGoogle()
+
+      console.log(login);
+
+      if(login)
+      {
+
+        const values = {
+          name:login.user.displayName,
+          email:login.user.email,
+          photo:login.user.photoURL
+        }
+
+        axiosInstance.post('glogin',values).then((response)=>{
+
+
+          if(response.data.success)
+          {
+            toast.success("Login Successful")
+            localStorage.setItem('token',JSON.stringify(response.data.token))
+        
+            setTimeout(()=>{
+              toast.dismiss()
+              goto("/")
+            },1000)
+            
+          
+        
+          }
+          else
+          {
+            toast.error("An error occured!")
+          }
+          
+        
+        
+              })
+      }
+      else
+      {
+        toast.error("!AN ERROR OCCURED")
+      }
+      
+
+
     
+    }
 
 
 // formik starts
@@ -159,12 +208,12 @@ if(!pass)
                   <button type="submit" className="w-full text-white bg-blue-700 p-2 rounded-md ">Login</button>
                    }
                   
-                  {/* <button
+                  <button
                   onClick={()=>handleGoogle()}
                   type="button" className="w-full flex items-center justify-center gap-2 text-white bg-blue-700 p-2 rounded-md">
   <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo" className="w-4 h-4" />
   <span>Login with Google</span>
-</button> */}
+</button>
                   <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                       Don't have an account? <Link to="/signup" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Signup Here</Link>
                   </p>

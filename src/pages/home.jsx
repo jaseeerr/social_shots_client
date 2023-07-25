@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PostCard from '../components/user/post';
 import SideBar from '../components/user/sideBar';
 import ProfileBar from '../components/user/profileBar';
@@ -7,9 +7,34 @@ import StoriesSmall from '../components/user/storiesSmall';
 import StoryModal from './storyModal';
 import Modal from '../components/user/test';
 import { useNavigate } from 'react-router';
+import MyAxiosInstance from '../utils/axios';
+import { IMG_CDN } from '../config/urls';
+
 const Home = () => {
 
+  const axiosInstance = MyAxiosInstance()
+
+  
+
+
 const goto = useNavigate()
+
+
+const getData = ()=>{
+
+  axiosInstance.get('myfeed').then((response)=>{
+
+      console.log(response)
+
+    setPosts(response.data)
+    
+
+    
+    
+  })
+
+
+}
 
   useEffect(()=>{
 
@@ -17,8 +42,12 @@ const goto = useNavigate()
     {
        goto('/login')
     }
+
+    getData()
   },[])
 
+
+  const [posts,setPosts] = useState([])
 
 
   const images = [
@@ -56,6 +85,24 @@ const goto = useNavigate()
       </div> */}
    
   
+    {posts.length!=0 && posts.map((post,key)=>{
+
+      return(
+        <PostCard
+        username={post.username}
+        dp = {IMG_CDN+post.profilePicture}
+        image={IMG_CDN+post.picture} 
+        caption={post.caption}
+        likes={post.likes}
+        date={post.date}
+        id={post._id}
+        uid={post.uid}
+        comments={post.comments}
+
+        
+        />
+      )
+    })}
     <PostCard
            username="John"
            image="https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg"

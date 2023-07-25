@@ -5,19 +5,12 @@ import { useState } from "react";
 
 
 let data = localStorage.getItem('userToken')
-const axiosInstance = MyAxiosInstance()
 
 let data1
 let status
 if(data)
 {
-    async function getdata()
-    {
-       
-        let response = await  axiosInstance.get('myData')
-        data1 = response.data
-    }
-    getdata()
+    
  
     status = true
 }
