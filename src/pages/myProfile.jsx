@@ -468,7 +468,7 @@ function MyProfile() {
                      :
 
                      <video   className="w-full h-60 object-cover rounded-lg cursor-pointer hover:opacity-50">
-                     <source src={ VIDEO_CDN+post.picture} type="video/mp4"  />
+                     <source src={ VIDEO_CDN+post.picture} type="video/mp4" />
                      Your browser does not support the video tag.
                    </video>
 

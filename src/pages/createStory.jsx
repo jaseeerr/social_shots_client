@@ -23,7 +23,16 @@ const CreateStory = () => {
 
    
     const file = event.target.files[0];
-    setSelectedImage(URL.createObjectURL(file));
+    if(!file.type.startsWith('image/'))
+    {
+  
+      toast.error("Invalid File")
+      handleClearSelection()
+    }
+    else
+    {
+      setSelectedImage(URL.createObjectURL(file));
+    }
   };
 
   const handleCropComplete = async (croppedArea, croppedAreaPixels) => {

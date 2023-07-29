@@ -25,13 +25,34 @@ const CreatePhoto = () => {
 
    
     const file = event.target.files[0];
-    setSelectedImage(URL.createObjectURL(file));
+    console.log(file);
+    if(!file.type.startsWith('image/'))
+    {
+      toast.error("Invalid File")
+      handleClearSelection()
+    }
+    else
+    {
+      setSelectedImage(URL.createObjectURL(file));
+    }
+ 
   };
 
+  
+
   const handleCropComplete = async (croppedArea, croppedAreaPixels) => {
+    console.log("000")
     try {
+     
+   
+     
+     
+
       const croppedImage = await getCroppedImg(selectedImage, croppedAreaPixels);
+      console.log(croppedImage);
       setCroppedImage(croppedImage);
+
+    
     } catch (error) {
       console.error('Error cropping image:', error);
     }
@@ -56,6 +77,7 @@ const CreatePhoto = () => {
     setLoading(true)
     const response = await fetch(croppedImage);
   const blob = await response.blob();
+  
        
 
     const newFileName = `img${Date.now()}`;

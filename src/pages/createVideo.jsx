@@ -13,6 +13,7 @@ const CreateVideo = () => {
   const axiosInstance = MyAxiosInstance()
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [caption,setCaption] = useState()
 
   const goto = useNavigate();
 
@@ -45,7 +46,7 @@ const CreateVideo = () => {
 
         const data1 = {
           img:response.data.public_id,
-          // caption:caption,
+          caption:caption,
           type:"video"
          }
     
@@ -114,7 +115,7 @@ const CreateVideo = () => {
                 <span className="flex justify-center items-center mt-20">
                   <label htmlFor="upload-input" className="cursor-pointer">
                     <span className='ml-14'>
-                    <FontAwesomeIcon icon={faVideo} style={{color: "#f7f7f8",}} size='2xl' className='mb-16 mt-12' />
+                    <FontAwesomeIcon icon={faVideo} style={{color: "#f7f7f8",}} size='2xl' className='mb-2 mt-12' />
                     </span>
                     <span className='flex justify-center items-center'>
                       <button onClick={() => {
@@ -136,6 +137,11 @@ const CreateVideo = () => {
               {selectedVideo && (
                 <div className="flex flex-col justify-center items-center mt-8">
                   <video controls src={selectedVideo} className="max-h-60 mb-4"></video>
+                  <textarea
+                onChange={(e)=>{
+                  setCaption(e.target.value)
+                }}
+                 id="message" rows="3" maxLength={180} class="block mb-3 p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here..."></textarea>
 
                   <button
                     className="bg-blue-500 text-white rounded-md px-2 p-1 text-sm font-semibold"

@@ -173,12 +173,19 @@ const ViewPost = ({ images }) => {
               }
               
           
+        }).then(()=>{
 
-              console.log(data)
-              setReady(true)
+          
+          console.log("888888");
+          console.log(data)
+          setLoader(true)
+
+
         })
 
     },[])
+
+  
 
 
    
@@ -231,7 +238,7 @@ const ViewPost = ({ images }) => {
     <>
      <Toaster />
       {/* Main post Modal */}
-      {showPost && (
+      {loader && showPost && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" >
 
 
@@ -281,7 +288,7 @@ const ViewPost = ({ images }) => {
                  <img src={data && IMG_CDN+data.picture} alt="Post" className="w-full mb-4" />
                  :
                  <video controls className='w-full'>
-                 <source src={ready && VIDEO_CDN+data.picture} type="video/mp4" className="w-full mb-4" />
+                 <source src={data && VIDEO_CDN+data?.picture} type="video/mp4" className="w-full mb-4" />
                  Your browser does not support the video tag.
                </video>
                 }
