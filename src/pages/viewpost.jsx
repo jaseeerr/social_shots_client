@@ -3,7 +3,7 @@ import { Link, useNavigate,useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faHeart, faXmark,faEllipsis, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import MyAxiosInstance from '../utils/axios';
-import { IMG_CDN } from '../config/urls';
+import { IMG_CDN, VIDEO_CDN } from '../config/urls';
 import { Toaster, toast } from 'react-hot-toast';
 import jwt from "jsonwebtoken"
 
@@ -144,11 +144,14 @@ const ViewPost = ({ images }) => {
       })
     }
 
+    const[ready,setReady] = useState(false)
    
     useEffect(()=>{
 
        
         axiosInstance.get(`getOnePost/${id}`).then((response)=>{
+
+         
 
           response.data.data.comments =  response.data.data.comments.reverse()
 
@@ -161,7 +164,7 @@ const ViewPost = ({ images }) => {
               for(let i=0;i<response.data.data.likes.length;i++)
               {
                
-                if(response.data.data.likes[i]==myData._id)
+                if(response.data.data.likes[i]==myData?._id)
                 {
                   
                   setLike(true)
@@ -171,6 +174,8 @@ const ViewPost = ({ images }) => {
               
           
 
+              console.log(data)
+              setReady(true)
         })
 
     },[])
@@ -197,7 +202,7 @@ const ViewPost = ({ images }) => {
       {
         setLike(true)
         const data1 = data
-        data1.likes.push(myData._id)
+        data1.likes.push(myData?._id)
         setData(data1)
 
       }
@@ -268,10 +273,23 @@ const ViewPost = ({ images }) => {
     >
        <FontAwesomeIcon icon={faEllipsis} style={{ color: "#ffffff", }} />
     </button>
+
   </div>
 
+                 {data.postType=='img'
+                 ?
+                 <img src={data && IMG_CDN+data.picture} alt="Post" className="w-full mb-4" />
+                 :
+                 <video controls className='w-full'>
+                 <source src={ready && VIDEO_CDN+data.picture} type="video/mp4" className="w-full mb-4" />
+                 Your browser does not support the video tag.
+               </video>
+                }
 
-                  <img src={data && IMG_CDN+data.picture} alt="Post" className="w-full mb-4" />
+                  
+
+
+
                   {like
                   ?
                   <span onClick={unlike1}>
@@ -284,6 +302,7 @@ const ViewPost = ({ images }) => {
                 }
                 
                     <span onClick={()=>{
+                      
                       getShortlist1()
                       setShowComments(true)}}>
                       <FontAwesomeIcon icon={faComment} style={{ color: "#ffffff", }} size='xl' className='mr-4 cursor-pointer' />
@@ -442,7 +461,7 @@ likelist.map((x)=>{
                 <span className="font-semibold text-white">{comment.username}</span>
               </div>
               <div>
-              {data.uid==myData._id ? 
+              {data && comment.uid==myData?._id ? 
 
 <span className='text-gray-400  text-xs flex ml-2 mt-3'
 onClick={()=>{
@@ -453,7 +472,7 @@ onClick={()=>{
  }
  axiosInstance.post('deletecomment',dat2).then((response)=>{
 
-   getShortlist1(response.data.data3)
+   getShortlist1(response.data.data3.reverse())
 
    console.log(response);
 

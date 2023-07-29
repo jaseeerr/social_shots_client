@@ -5,7 +5,7 @@ import MyAxiosInstance from '../utils/axios';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router';
 import { Toaster, toast } from 'react-hot-toast';
-import { IMG_CDN } from '../config/urls';
+import { IMG_CDN, VIDEO_CDN } from '../config/urls';
 import Test from '../components/user/test';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -98,7 +98,7 @@ function MyProfile() {
 
 
         for (let i = 0; i < arr.length; i++) {
-          if (data.data1.followers[i].uid == mydata.data._id) {
+          if (data.data1.followers[i].uid == mydata?.data?._id) {
             setFollowingBtn(true)
             break;
           }
@@ -457,13 +457,23 @@ function MyProfile() {
                   // Render posts
                   posts.map((post, index) => (
                     <Link to={`/viewPost/${post._id}`}>
-                      <img
+                      {post.postType=="img" ?
+                       <img
 
-                        key={post._id}
-                        src={IMG_CDN + post.picture}
-                        alt={`Photo ${index + 1}`}
-                        className="w-full h-60 object-cover rounded-lg cursor-pointer hover:opacity-50"
-                      />
+                       key={post._id}
+                       src={IMG_CDN + post.picture}
+                       alt={`Photo ${index + 1}`}
+                       className="w-full h-60 object-cover rounded-lg cursor-pointer hover:opacity-50"
+                     />
+                     :
+
+                     <video   className="w-full h-60 object-cover rounded-lg cursor-pointer hover:opacity-50">
+                     <source src={ VIDEO_CDN+post.picture} type="video/mp4"  />
+                     Your browser does not support the video tag.
+                   </video>
+
+                    }
+                     
                     </Link>
 
                   ))

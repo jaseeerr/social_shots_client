@@ -8,7 +8,7 @@ import { Toaster, toast } from 'react-hot-toast';
 
 import { IMG_CDN } from '../../config/urls';
 
-const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments }) => {
+const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments, type, video }) => {
 
   const axiosInstance = MyAxiosInstance()
 
@@ -40,7 +40,7 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments 
 
     axiosInstance.post('shortlist',likes).then((response)=>{
 
-      console.log(response);
+      console.log(response)
 
 
       setLikelist(response.data)
@@ -99,7 +99,7 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments 
            }
          }
    
-    
+          // dat1 = dat1.reverse()
    
            setCommentList(dat1)
    
@@ -158,7 +158,7 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments 
 
     getShortlist1()
 
-    if(myData._id==uid)
+    if(myData?._id==uid)
     {
       setOwn(true)
     }
@@ -166,7 +166,7 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments 
     for(let i=0;i<likes.length;i++)
     {
      
-      if(likes[i]==myData._id)
+      if(likes[i]==myData?._id)
       {
         
         setLike(true)
@@ -183,7 +183,7 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments 
       if(response.data.success)
       {
         setLike(true)
-        likes.push(myData._id)
+        likes.push(myData?._id)
       }
     })
   }
@@ -234,7 +234,14 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments 
 
 
         </div>
-        <img src={image? image : "https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg"} alt="Post" className="w-full" />
+        {type=="img" ? 
+                <img src={image? image : "https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg"} alt="Post" className="w-full" />
+         :
+         <video controls className='w-full'>
+  <source src={video ? video : null} type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+      }
         <p className="text-white">{caption}</p>
         <div className="mt-4">
          
@@ -400,7 +407,7 @@ likelist.map((x)=>{
                 <span className="font-semibold text-white">{comment.username}</span>
               </div>
               <div>
-              {comment.uid==myData._id ? 
+              {comment.uid==myData?._id ? 
 
 <span className='text-gray-400  text-xs flex ml-2 mt-3'
 onClick={()=>{
@@ -410,6 +417,8 @@ onClick={()=>{
 
  }
  axiosInstance.post('deletecomment',dat2).then((response)=>{
+
+  
 
    getShortlist1(response.data.data3)
 

@@ -64,7 +64,7 @@ axiosInstance.get('myData').then((response)=>{
 
     {/* Create Modal */}
     {showModal && (
-              <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" >
+              <div className="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 flex items-center justify-center" >
                 <div className="bg-black p-8 rounded-lg w-80">
                   <h2 className="text-xl font-semibold mb-2 text-white text-center">Create a shot</h2>
                   <span className='text-white'>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import MyAxiosInstance from '../utils/axios';
 import toast, {Toaster} from 'react-hot-toast';
@@ -18,6 +18,14 @@ const Login = ()=>{
     const goto = useNavigate()
 
     const axiosInstance = MyAxiosInstance();
+
+    useEffect(()=>{
+
+      if(localStorage.getItem('userToken'))
+      {
+        goto('/')
+      }
+    },[])
 
     const handleGoogle = async ()=>{
 
@@ -40,7 +48,8 @@ const Login = ()=>{
           if(response.data.success)
           {
             toast.success("Login Successful")
-            localStorage.setItem('token',JSON.stringify(response.data.token))
+           
+            localStorage.setItem('userToken',response.data.token)
         
             setTimeout(()=>{
               toast.dismiss()
@@ -50,6 +59,7 @@ const Login = ()=>{
           
         
           }
+          
           else
           {
             toast.error("An error occured!")
@@ -136,6 +146,10 @@ if(!pass)
                 {
                   toast.error("Account not verified, Please check your mail for the verification link.")
                 }
+                else if(response.data.gerr)
+               {
+                 toast.error("Please login with your google account.")
+               }
                 else
                 {
                   toast.error("Unknown Error Occurred")

@@ -8,7 +8,7 @@ import StoryModal from './storyModal';
 import Modal from '../components/user/test';
 import { useNavigate } from 'react-router';
 import MyAxiosInstance from '../utils/axios';
-import { IMG_CDN } from '../config/urls';
+import { IMG_CDN, VIDEO_CDN } from '../config/urls';
 
 const Home = () => {
 
@@ -24,9 +24,48 @@ const getData = ()=>{
 
   axiosInstance.get('myfeed').then((response)=>{
 
-      console.log(response)
 
-    setPosts(response.data)
+
+  
+
+      let dat = response.data.map((x)=>{
+        return x.uid
+      })
+
+   
+      axiosInstance.post('shortlist',dat).then((response1)=>{
+
+        let dat1 = response1.data
+        let dat2 = response.data
+        console.log("****");
+        console.log(dat1)
+        console.log(dat2);
+        console.log("****");
+
+        for(let i=0;i<dat1.length;i++)
+        {
+         
+          for(let j=0;j<dat2.length;j++)
+          {
+            if(dat1[i].uid==dat2[j].uid)
+            {
+              dat2[j].username = dat1[i].username
+              dat2[j].profilePicture = dat1[i].dp
+              
+            
+            }
+          }
+        }
+  
+        setPosts(response.data)
+
+        setTimeout(()=>{
+
+          console.log(posts)
+        },1000)
+      })
+
+  
     
 
     
@@ -44,6 +83,7 @@ const getData = ()=>{
     }
 
     getData()
+
   },[])
 
 
@@ -90,8 +130,10 @@ const getData = ()=>{
       return(
         <PostCard
         username={post.username}
+        type={post.postType}
         dp = {IMG_CDN+post.profilePicture}
         image={IMG_CDN+post.picture} 
+        video={VIDEO_CDN+post.picture}
         caption={post.caption}
         likes={post.likes}
         date={post.date}
