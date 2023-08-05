@@ -22,7 +22,6 @@ const StoryModal = () => {
 
   ]
   useEffect(() => {
-    console.log(localStorage.getItem('userToken'))
 
     if (!localStorage.getItem('userToken')) {
       goto('/login')

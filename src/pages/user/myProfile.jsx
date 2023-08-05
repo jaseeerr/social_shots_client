@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import SideBar from '../components/user/sideBar'
-import myProfile from "../components/user/myProfile"
-import MyAxiosInstance from '../utils/axios';
+import SideBar from '../../components/user/sideBar'
+import MyAxiosInstance from '../../utils/axios';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router';
 import { Toaster, toast } from 'react-hot-toast';
-import { IMG_CDN, VIDEO_CDN } from '../config/urls';
-import Test from '../components/user/test';
+import { IMG_CDN, VIDEO_CDN } from '../../config/urls';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateUserdata } from '../utils/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 
@@ -20,9 +17,7 @@ function MyProfile() {
   const [bioBtn, setBioBtn] = useState(false)
   const [newp, setNewp] = useState(null)
   const [bload, setBload] = useState(false)
-  const sliceData = useSelector(store => store.userInfo.userdata)
-  const dispatch = useDispatch()
-  const [test, setTest] = useState(true)
+
 
   const [username, setUsername] = useState()
   const [email, setEmail] = useState()
@@ -96,11 +91,21 @@ function MyProfile() {
     
 
 
-
-        for (let i = 0; i < arr.length; i++) {
-          if (data.data1.followers[i].uid == mydata?.data?._id) {
+        for (let i = 0; i < arr.length ; i++) {
+          if (data?.data1?.followers[i]?.uid == mydata?.data?._id) {
             setFollowingBtn(true)
             break;
+          }
+         
+         
+        }
+
+        for (let i = 0; i < data?.data1?.requests.length ; i++) {
+        
+          if(data?.data1?.requests[i]?.uid == mydata?.data?._id)
+          {
+            setRequestedBtn(true)
+            break   
           }
         }
 

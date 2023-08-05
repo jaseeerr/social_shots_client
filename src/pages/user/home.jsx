@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import PostCard from '../components/user/post';
-import SideBar from '../components/user/sideBar';
-import ProfileBar from '../components/user/profileBar';
-import Stories from '../components/user/stories';
-import StoriesSmall from '../components/user/storiesSmall';
-import StoryModal from './storyModal';
-import Modal from '../components/user/test';
+import PostCard from '../../components/user/post';
+import SideBar from '../../components/user/sideBar';
+import ProfileBar from '../../components/user/profileBar';
+import Stories from '../../components/user/stories';
 import { useNavigate } from 'react-router';
-import MyAxiosInstance from '../utils/axios';
-import { IMG_CDN, VIDEO_CDN } from '../config/urls';
+import MyAxiosInstance from '../../utils/axios';
+import { IMG_CDN, VIDEO_CDN } from '../../config/urls';
 
 const Home = () => {
 

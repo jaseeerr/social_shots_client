@@ -4,18 +4,19 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { Provider } from "react-redux"
 import Store from "./src/utils/store";
 
-import Signup from "./src/pages/signup";
-import Home from "./src/pages/home";
-import StoryModal from "./src/pages/storyModal";
+import Signup from "./src/pages/user/signup";
+import Home from "./src/pages/user/home";
+import StoryModal from "./src/pages/user/storyModal";
 import Test from "./src/components/user/test";
-import MyProfile from "./src/pages/myProfile";
-import CreatePhoto from "./src/pages/createPhoto";
-import CreateVideo from "./src/pages/createVideo";
-import CreateStory from "./src/pages/createStory";
-import Login from "./src/pages/login";
-import ViewPost from "./src/pages/viewpost";
-import Explore from "./src/pages/explore";
-import ChatList from "./src/components/user/chatList";
+import MyProfile from "./src/pages/user/myProfile";
+import CreatePhoto from "./src/pages/user/createPhoto";
+import CreateVideo from "./src/pages/user/createVideo";
+import CreateStory from "./src/pages/user/createStory";
+import Login from "./src/pages/user/login";
+import ViewPost from "./src/pages/user/viewpost";
+import Explore from "./src/pages/user/explore";
+import FindAccount from "./src/pages/user/findAccount";
+import Test from "./src/components/user/test";
 
 
 const images = []
@@ -80,7 +81,7 @@ const AppRouter = createBrowserRouter([
            
             {
                 path:"/test",
-                element: <ChatList/>
+                element: <Test/>
             },
             {
                 path:"/createPhoto",
@@ -116,6 +117,10 @@ const AppRouter = createBrowserRouter([
         path:"/signup",
         element: <Provider store={Store}> <Signup  /></Provider>
     },
+    {
+        path:"/forgotPassword",
+        element: <FindAccount />
+    }
     
 
     

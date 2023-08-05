@@ -7,50 +7,54 @@ const Test = ({ images }) => {
 
  
   return (
+
+
+
 <>
+<div className='flex'>
+  <SideBar/>
 
+  <div className="bg-black text-white w-full">
+      <header className="bg-black py-4 px-8 shadow-md">
+        {/* Navbar and logo */}
+        <nav className="flex justify-between items-center">
+          {/* Navbar content goes here */}
+        </nav>
+      </header>
+      <main className="container mx-auto my-4">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+         
+          {/* <div className="p-4 bg-black rounded shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Follow Requests</h2>
+            <ul>
+         
+              <li className="border-b py-2">User 1 wants to follow you</li>
+              <li className="border-b py-2">User 2 wants to follow you</li>
+              <li className="border-b py-2">User 3 wants to follow you</li>
+            </ul>
+          </div> */}
 
-<div className="bg-black shadow-2xl overflow-hidden border rounded-md mt-5">
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <img
-                onClick={goProfile}
-                src="https://i1.sndcdn.com/avatars-000252187355-42nbzf-t500x500.jpg"
-                alt="User Profile"
-                className="w-8 h-8 rounded-full cursor-pointer"
-              />
-            </div>
-            <div className="ml-3">
-              <span className="font-semibold text-white">{username}</span>
-            </div>
+          <div className="p-4 bg-black rounded shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Notifications</h2>
+            <ul>
+              {/* List of notifications goes here */}
+              <li className="border-b py-2">Notification 1</li>
+              <li className="border-b py-2">Notification 2</li>
+              <li className="border-b py-2">Notification 3</li>
+            </ul>
           </div>
-          {/* Button */}
-          <button
-            className="text-white bg-blue-500 rounded px-4 py-2"
-            onClick={handleButtonClick}
-          >
-            Click Me
-          </button>
-        </div>
-        <img src="https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg" alt="Post" className="w-full" />
-        <p className="text-white">{caption}</p>
-        <div className="mt-4">
-          <span>
-            <FontAwesomeIcon icon={faHeart} style={{ color: "#ffffff" }} size="xl" className="mr-4" />
-          </span>
-          <span>
-            <FontAwesomeIcon icon={faComment} style={{ color: "#ffffff" }} size="xl" className="mr-4" />
-          </span>
-          <br />
-          <span className="text-white">{likes} likes</span>
-        </div>
-      </div>
+        </section>
+      </main>
+      <footer className="bg-gray-700 py-4 text-white">
+        {/* Footer content goes here */}
+      </footer>
     </div>
 
-
+</div>
 </>
+
+
+
   );
 };
 

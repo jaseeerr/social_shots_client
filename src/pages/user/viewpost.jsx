@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate,useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faHeart, faXmark,faEllipsis, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import MyAxiosInstance from '../utils/axios';
-import { IMG_CDN, VIDEO_CDN } from '../config/urls';
+import MyAxiosInstance from '../../utils/axios';
+import { IMG_CDN, VIDEO_CDN } from '../../config/urls';
 import { Toaster, toast } from 'react-hot-toast';
 import jwt from "jsonwebtoken"
 
@@ -146,42 +146,50 @@ const ViewPost = ({ images }) => {
 
     const[ready,setReady] = useState(false)
    
-    useEffect(()=>{
-
-       
-        axiosInstance.get(`getOnePost/${id}`).then((response)=>{
+    const getData = ()=>{
+      axiosInstance.get(`getOnePost/${id}`).then((response)=>{
 
          
 
-          response.data.data.comments =  response.data.data.comments.reverse()
+        response.data.data.comments =  response.data.data.comments.reverse()
 
-              setData(response.data.data)
-              setOwn(response.data.own)
-              setCommentList(response.data.data.comments)
+            setData(response.data.data)
+            setOwn(response.data.own)
+            setCommentList(response.data.data.comments)
+           
+
+      
+            for(let i=0;i<response.data.data.likes.length;i++)
+            {
              
+              if(response.data.data.likes[i]==myData?._id)
+              {
+                
+                setLike(true)
+                break;
+              }
+            }
+            
+        
+      }).then(()=>{
 
         
-              for(let i=0;i<response.data.data.likes.length;i++)
-              {
-               
-                if(response.data.data.likes[i]==myData?._id)
-                {
-                  
-                  setLike(true)
-                  break;
-                }
-              }
-              
-          
-        }).then(()=>{
-
-          
-          console.log("888888");
-          console.log(data)
-          setLoader(true)
+        console.log("888888");
+        console.log(data)
+        setLoader(true)
 
 
-        })
+      })
+    }
+    useEffect(()=>{
+
+      if(!localStorage.getItem('userToken'))
+      {
+        goto('/login')
+      }
+       
+      getData()
+        
 
     },[])
 
@@ -573,7 +581,10 @@ null}
 
             <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
-                    onClick={()=>setShowComments(false)}
+                    onClick={()=>{
+                      setShowComments(false)
+                      getData()
+                    }}
                   >
                     Close
                   </button>

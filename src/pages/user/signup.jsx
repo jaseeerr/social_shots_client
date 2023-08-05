@@ -1,12 +1,12 @@
-import React,{useState} from "react"
+import React,{useEffect, useState} from "react"
 import { useFormik } from "formik"
-import MyAxiosInstance from '../utils/axios'
+import MyAxiosInstance from '../../utils/axios'
 import toast, {Toaster} from 'react-hot-toast'
 import { Link, useNavigate } from "react-router-dom";
-import logoImage from '../../public/assets/LOGOBig.png'; // Replace with the actual path to your logo image
+import logoImage from '../../../public/assets/LOGOBig.png'; // Replace with the actual path to your logo image
 import { useDispatch, useSelector } from "react-redux"
-import {setVerify} from "../utils/commonSlice"
-import { wordlist1 } from "../config/wordlist";
+import {setVerify} from "../../utils/commonSlice"
+import { wordlist1 } from "../../config/wordlist";
 
 const Signup = ()=>{
 
@@ -17,6 +17,15 @@ const Signup = ()=>{
 
     const axiosInstance = MyAxiosInstance();
     const goto = useNavigate() 
+
+    useEffect(()=>{
+
+      if(localStorage.getItem('userToken'))
+      {
+        goto('/')
+      }
+
+    },[])
 
 // formik starts
 const formik = useFormik({

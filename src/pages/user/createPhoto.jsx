@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
-import SideBar from '../components/user/sideBar';
-import { getCroppedImg } from '../utils/croputils'; // Import your crop utility function
+import React, { useEffect, useState } from 'react';
+import SideBar from '../../components/user/sideBar';
+import { getCroppedImg } from '../../utils/croputils'; // Import your crop utility function
 import ReactEasyCrop from 'react-easy-crop'
 import toast, {Toaster} from 'react-hot-toast'
 import axios from 'axios';
 import { useNavigate } from 'react-router';
-import MyAxiosInstance from '../utils/axios';
+import MyAxiosInstance from '../../utils/axios';
 
 
 const CreatePhoto = () => {
+
+  const goto = useNavigate()
+
+  useEffect(()=>{
+
+    if(!localStorage.getItem('userToken'))
+    {
+      goto('/login')
+    }
+
+  },[])
 
   const axiosInstance = MyAxiosInstance();
 
@@ -20,7 +31,7 @@ const CreatePhoto = () => {
   const [caption,setCaption] = useState("")
 
  
-  const goto = useNavigate()
+  
   const handleImageUpload = (event) => {
 
    

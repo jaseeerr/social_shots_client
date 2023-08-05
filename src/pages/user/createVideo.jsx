@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import SideBar from '../components/user/sideBar';
+import SideBar from '../../components/user/sideBar';
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideo } from '@fortawesome/free-solid-svg-icons';
-import MyAxiosInstance from '../utils/axios';
+import MyAxiosInstance from '../../utils/axios';
 
 
 const CreateVideo = () => {
@@ -15,7 +15,16 @@ const CreateVideo = () => {
   const [loading, setLoading] = useState(false);
   const [caption,setCaption] = useState()
 
-  const goto = useNavigate();
+  const goto = useNavigate()
+
+  useEffect(()=>{
+
+    if(!localStorage.getItem('userToken'))
+    {
+      goto('/login')
+    }
+
+  },[])
 
   const handleVideoUpload = (event) => {
     const file = event.target.files[0];
