@@ -259,7 +259,7 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments,
           
       
           <span  onClick={()=>{
-                      getShortlist1(comments.reverse())
+                      getShortlist1(comments?.reverse())
                       setShowComments(true)}}>
           <FontAwesomeIcon icon={faComment} style={{color: "#ffffff",}} size='xl' className='mr-4 cursor-pointer' />
           </span>

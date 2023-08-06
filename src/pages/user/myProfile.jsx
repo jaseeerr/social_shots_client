@@ -338,9 +338,10 @@ function MyProfile() {
         </div>
       </div> : <div className='flex'>
 
+
         <SideBar />
 
-        <div className="bg-black text-white min-h-screen mt-10 lg:ml-36 lg:-mt-3 ">
+        <div className="bg-black text-white min-h-screen  lg:ml-36 lg:-mt-3 ">
 
           <main className="max-w-full mx-auto px-6 py-8  sm:mt-24 ">
             <div className="flex">
@@ -457,7 +458,7 @@ function MyProfile() {
             {/* Photos */}
             <div className="mt-8 sm:border-t ">
               <h3 className="text-2xl font-semibold mb-4">Photos</h3>
-              <div className="grid grid-cols-3 gap-4" >
+              <div className="grid grid-cols-3 gap-4 mb-0 md:mb-8 sm:mb-8" >
                 {posts.length !== 0 && own || posts.length!==0 && followingBtn ||posts.length!=0 && !userdata.private? (
                   // Render posts
                   posts.map((post, index) => (

@@ -16,6 +16,7 @@ import Login from "./src/pages/user/login";
 import ViewPost from "./src/pages/user/viewpost";
 import Explore from "./src/pages/user/explore";
 import FindAccount from "./src/pages/user/findAccount";
+import NewPassword from "./src/pages/user/newPassword";
 import Test from "./src/components/user/test";
 
 
@@ -120,6 +121,10 @@ const AppRouter = createBrowserRouter([
     {
         path:"/forgotPassword",
         element: <FindAccount />
+    },
+    {
+        path:"/newPassword/:id",
+        element: <NewPassword />
     }
     
 

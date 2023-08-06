@@ -11,7 +11,7 @@ const Home = () => {
 
   const axiosInstance = MyAxiosInstance()
 
-  
+  const [suggested,setSuggested] = useState([])
 
 
 const goto = useNavigate()
@@ -22,8 +22,16 @@ const getData = ()=>{
   axiosInstance.get('myfeed').then((response)=>{
 
 
+    axiosInstance.get('allPosts').then((response4)=>{
 
-  
+
+
+     
+      setSuggested(response4.data)
+
+      
+
+      
 
       let dat = response.data.map((x)=>{
         return x.uid
@@ -34,10 +42,7 @@ const getData = ()=>{
 
         let dat1 = response1.data
         let dat2 = response.data
-        console.log("****");
-        console.log(dat1)
-        console.log(dat2);
-        console.log("****");
+       
 
         for(let i=0;i<dat1.length;i++)
         {
@@ -56,12 +61,16 @@ const getData = ()=>{
   
         setPosts(response.data)
 
-        setTimeout(()=>{
-
-          console.log(posts)
-        },1000)
+        
       })
 
+
+
+
+
+    })
+
+  
   
     
 
@@ -78,8 +87,12 @@ const getData = ()=>{
     {
        goto('/login')
     }
+    else
+    {
+      getData()
+    }
 
-    getData()
+  
 
   },[])
 
@@ -122,51 +135,91 @@ const getData = ()=>{
       </div> */}
    
   
+  
+
+ 
+
     {posts.length!=0 && posts.map((post,key)=>{
 
-      return(
-        <PostCard
-        username={post.username}
-        type={post.postType}
-        dp = {IMG_CDN+post.profilePicture}
-        image={IMG_CDN+post.picture} 
-        video={VIDEO_CDN+post.picture}
-        caption={post.caption}
-        likes={post.likes}
-        date={post.date}
-        id={post._id}
-        uid={post.uid}
-        comments={post.comments}
+return(
+  <PostCard
+  username={post.username}
+  type={post.postType}
+  dp = {IMG_CDN+post.profilePicture}
+  image={IMG_CDN+post.picture} 
+  video={VIDEO_CDN+post.picture}
+  caption={post.caption}
+  likes={post.likes}
+  date={post.date}
+  id={post._id}
+  uid={post.uid}
+  comments={post.comments}
 
-        
-        />
-      )
-    })}
+  
+  />
+)
+})}
+
+<div className='w-full mt-10'>
+                <p className='text-white border-t border-b py-2 font-bold'>
+                  Suggested
+                </p>
+    </div>
+
+
+
+    {suggested.length!=0 && suggested.map((post,key)=>{
+
+return(
+  <PostCard
+  username={post.username}
+  type={post.postType}
+  dp = {IMG_CDN+post.profilePicture}
+  image={IMG_CDN+post.picture} 
+  video={VIDEO_CDN+post.picture}
+  caption={post.caption}
+  likes={post.likes}
+  date={post.date}
+  id={post._id}
+  uid={post.uid}
+  comments={post.comments}
+  key={post._id}
+  
+  />
+)
+})}
+
+
     <PostCard
+    type={"img"}
            username="John"
            image="https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg"
            likes={213}
            caption="Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates rem, eius et aliquid, eum repellat numquam amet quaerat nulla iure earum provident corporis exercitationem, voluptatem suscipit esse molestiae vel incidunt."
          />
          <PostCard
+         type={"img"}
            username="John"
            image="https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg"
            likes={213}
            caption="Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates rem, eius et aliquid, eum repellat numquam amet quaerat nulla iure earum provident corporis exercitationem, voluptatem suscipit esse molestiae vel incidunt."
          />
           <PostCard
+          type={"img"}
            username="John"
            image="https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg"
            likes={213}
            caption="Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates rem, eius et aliquid, eum repellat numquam amet quaerat nulla iure earum provident corporis exercitationem, voluptatem suscipit esse molestiae vel incidunt."
          />
           <PostCard
+          type={"img"}
            username="John"
            image="https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg"
            likes={213}
            caption="Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates rem, eius et aliquid, eum repellat numquam amet quaerat nulla iure earum provident corporis exercitationem, voluptatem suscipit esse molestiae vel incidunt."
          />
           <PostCard
+          type={"img"}
            username="John"
            image="https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg"
            likes={213}
