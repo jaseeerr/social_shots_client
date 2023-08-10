@@ -18,8 +18,12 @@ import Explore from "./src/pages/user/explore";
 import FindAccount from "./src/pages/user/findAccount";
 import NewPassword from "./src/pages/user/newPassword";
 import Test from "./src/components/user/test";
-
-
+import AdminHome from "./src/pages/admin/home";
+import AdminNavbar from "./src/components/admin/adminNavbar";
+import AdminLogin from "./src/pages/admin/login";
+import UserList from "./src/pages/admin/userList";
+import PostList from "./src/pages/admin/postList";
+import Err from "./src/pages/user/error";
 const images = []
 const images1 = [
     "https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg",
@@ -43,7 +47,7 @@ const images1 = [
     "https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg",
     "https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg",
 ]
-const AppLayout = ()=>{
+const UserLayout = ()=>{
 
     
    
@@ -58,13 +62,35 @@ const AppLayout = ()=>{
     )
 }
 
+const AdminLayout = ()=>{
+
+    
+   
+
+    return(
+        <>
+        <Provider store={Store}>
+       
+     
+        <AdminNavbar/>
+              
+              <Outlet />
+
+      
+               
+                  
+        </Provider>
+        </>
+    )
+}
+
 
 
 const AppRouter = createBrowserRouter([
     {
         path:"/",
-        element:<AppLayout/>,
-        errorElement:<Error/>,
+        element:<UserLayout/>,
+        errorElement:<Err/>,
         children:[
             {
                 path:"/",
@@ -125,14 +151,32 @@ const AppRouter = createBrowserRouter([
     {
         path:"/newPassword/:id",
         element: <NewPassword />
-    }
-    
+    },
 
-    
-    // {
-    //     path:"/admin",
-    //     element:<Provider store={Store}><AdminHome/></Provider>
-    // }
+    {
+        path:"/admin",
+        element:<AdminLayout/>,
+        errorElement:<Err/>,
+        children:[
+            {
+                path:"/admin",
+                element:<AdminHome/>
+
+            },
+            {
+                path:"/admin/userlist",
+                element:<UserList/>
+            },
+            {
+                path:"/admin/postlist",
+                element:<PostList/>
+            }
+        ]
+    },
+    {
+        path:"/admin/login",
+        element:<AdminLogin/>
+    }
     
     
 ])

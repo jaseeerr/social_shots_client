@@ -37,7 +37,7 @@ const CreatePhoto = () => {
    
     const file = event.target.files[0];
     console.log(file);
-    if(!file.type.startsWith('image/'))
+    if(!file?.type.startsWith('image/'))
     {
       toast.error("Invalid File")
       handleClearSelection()

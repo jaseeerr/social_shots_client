@@ -4,14 +4,12 @@
   import toast, {Toaster} from 'react-hot-toast';
   import { Link, useNavigate } from "react-router-dom";
   import logoImage from '../../../public/assets/LOGOBig.png';
-  import { useSelector } from "react-redux";
-  import { SignInWithGoogle } from "../../utils/firebase1";
+ 
 
 
 
-  const Login = ()=>{
+  const AdminLogin = ()=>{
 
-    const verify = useSelector(store=>store.commonSlice.verify)
     const [loader,setLoader] = useState()
     const [pass,setPass] = useState(true)
 
@@ -21,63 +19,13 @@
 
       useEffect(()=>{
 
-        if(localStorage.getItem('userToken'))
+        if(localStorage.getItem('adminToken'))
         {
-          goto('/')
+          goto('/admin')
         }
       },[])
 
-      const handleGoogle = async ()=>{
-
-        const login  = await SignInWithGoogle()
-
-        console.log(login);
-
-        if(login)
-        {
-
-          const values = {
-            name:login.user.displayName,
-            email:login.user.email,
-            photo:login.user.photoURL
-          }
-
-          axiosInstance.post('glogin',values).then((response)=>{
-
-
-            if(response.data.success)
-            {
-              toast.success("Login Successful")
-            
-              localStorage.setItem('userToken',response.data.token)
-          
-              setTimeout(()=>{
-                toast.dismiss()
-                goto("/")
-              },1000)
-              
-            
-          
-            }
-            
-            else
-            {
-              toast.error("An error occured!")
-            }
-            
-          
-          
-                })
-        }
-        else
-        {
-          toast.error("!AN ERROR OCCURED")
-        }
-        
-
-
-      
-      }
+     
 
 
   // formik starts
@@ -118,17 +66,18 @@
         },1500)
     setLoader(true)
               // Make the POST request
-              axiosInstance.post('login',values).then((response)=>{
+              axiosInstance.post('admin/login',values).then((response)=>{
 
                   console.log(response)
                   setLoader(false)
                   if(response.data.success)
                   {
                       toast.success("Login Successful")
-                    localStorage.setItem('userToken',response.data.token)
+                    localStorage.setItem('adminToken',response.data.token)
+              
                     setTimeout(()=>{
                       toast.dismiss()
-                      location.href = "/"
+                      location.href = "/admin"
 
                     },1000)
                     
@@ -141,18 +90,6 @@
                   {
                       toast.error("Invalid Email")
                   }
-                  else if(response.data.blocked)
-                  {
-                    toast.error("Your account is suspended due to unusual activities.") 
-                  }
-                  else if(response.data.notVerified)
-                  {
-                    toast.error("Account not verified, Please check your mail for the verification link.")
-                  }
-                  else if(response.data.gerr)
-                {
-                  toast.error("Please login with your google account.")
-                }
                   else
                   {
                     toast.error("Unknown Error Occurred")
@@ -181,15 +118,15 @@
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                 <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                    Login
+                    Admin Panel
                 </h1>
                 <form className="space-y-4 md:space-y-6" action="#" onSubmit={formik.handleSubmit}>
               
                     <div>
-                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username / Email</label>
+                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
                         <input
                           {...formik.getFieldProps('email')}
-                        type="text" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Username / Email" required />
+                        type="text" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Username" required />
                     {formik.errors.email ? (
                   <div style={{color:"red"}}>{formik.errors.email}</div> 
                 ) : null}
@@ -206,12 +143,7 @@
                     </div>
                   
                     <div className="flex items-start">
-                        {/* <div className="flex items-center h-5">
-                          <input id="terms" aria-describedby="terms" type="checkbox" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required/>
-                        </div> */}
-                        <div className="ml-3 text-sm">
-                          <label htmlFor="terms" className="font-light text-gray-500 dark:text-gray-300">  <Link className="font-medium text-primary-600 hover:underline dark:text-primary-500" to="/forgotPassword">Forgot Password?</Link></label>
-                        </div>
+                       
                     </div>
                     {loader ?
                     <button type="submit" className="w-full text-white bg-blue-700 p-2 rounded-md ">
@@ -225,15 +157,8 @@
                     <button type="submit" className="w-full text-white bg-blue-700 p-2 rounded-md ">Login</button>
                     }
                     
-                    <button
-                    onClick={()=>handleGoogle()}
-                    type="button" className="w-full flex items-center justify-center gap-2 text-white bg-blue-700 p-2 rounded-md">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo" className="w-4 h-4" />
-    <span>Login with Google</span>
-  </button>
-                    <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                        Don't have an account? <Link to="/signup" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Signup Here</Link>
-                    </p>
+                  
+                   
                     </form>
             </div>
         </div>
@@ -243,4 +168,4 @@
       )
   }
 
-  export default Login
+  export default AdminLogin

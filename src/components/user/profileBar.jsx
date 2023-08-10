@@ -3,11 +3,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { IMG_CDN } from '../../config/urls'
 import MyAxiosInstance from '../../utils/axios'
+import { get } from 'lodash'
 function ProfileBar() {
 
   const axiosInstance = MyAxiosInstance()
   const [username,setUsername] = useState(null)
   const [dp,setDp] = useState(null)
+  const [suggested,setSuggested] = useState([])
 
   const goto = useNavigate()
   const goProfile = ()=>{
@@ -23,17 +25,33 @@ function ProfileBar() {
 
   }
 
+  const getData = async ()=>{
+
+    const response = await  axiosInstance.get('myData')
+    const res = await axiosInstance.get('suggested')
+    console.log(res.data)
+    setSuggested(res.data)
+    setUsername(response?.data?.username)
+    setDp(response?.data?.dp)
+     
+
+  }
+
 
   useEffect(()=>{
 
-    axiosInstance.get('myData').then((response)=>{
+
+    if(!localStorage.getItem('userToken'))
+    {
+      goto('/login')
+    }
+    else
+    {
+      getData()
+    }
     
-    
-      setUsername(response?.data?.username)
-      setDp(response?.data?.dp)
-     
-    
-    })
+
+  
     
       },[])
 
@@ -41,8 +59,8 @@ function ProfileBar() {
 
   return (
     <>
-     <div className='border rounded-md p-9'>
-     <div className="flex p-2  rounded-md py-5  ">
+     <div className='border rounded-md p-9 '>
+     <div className="flex p-2  rounded-md py-5 w-64 ">
       <span className='flex cursor-pointer' onClick={goProfile}>
       <img
               src={dp && IMG_CDN+dp}
@@ -59,9 +77,31 @@ function ProfileBar() {
 
           <div className="bg-black  p-1 rounded-lg shadow-lg">
     <p className='text-white'>Suggested for you</p>
-    <div className="bg-blue-950 p-4 mt-2 rounded-lg shadow"></div>
-    <div className="bg-blue-950 p-4 mt-2 rounded-lg shadow"></div>
-    <div className="bg-blue-950 p-4 mt-2 rounded-lg shadow"></div>
+
+    {suggested?.length!=0 ? suggested?.map((x)=>{
+
+return(
+ <Link to={`/${x?.username}`}>
+  <div className="bg-blue-950 p-4 mt-2 rounded-lg shadow flex">
+
+<img src={IMG_CDN+x?.dp} alt="" className='rounded-full w-10 h-10 object-cover' />     
+<p className='text-white ml-2 mt-1'>{x?.username}</p>    
+ 
+</div>
+ </Link>
+)
+
+
+    }) : null}
+  
+    {/* <div className="bg-blue-950 p-4 mt-2 rounded-lg shadow">
+
+
+    </div>
+    <div className="bg-blue-950 p-4 mt-2 rounded-lg shadow">
+
+
+    </div> */}
  
 </div>
 

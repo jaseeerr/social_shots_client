@@ -71,15 +71,11 @@ function MyProfile() {
 
 
       axiosInstance.get(`profile/${id}`).then((dataResponse) => {
-
-
         
-
         const data = dataResponse.data;
-
         console.log(data)
       //  if(data.data1 == {})
-      if (Object.keys(data.data1).length === 0 && data.data1.constructor === Object)
+      if (Object.keys(data?.data1).length === 0 && data.data1.constructor === Object)
        {
        
         goto('/explore')
@@ -339,9 +335,11 @@ function MyProfile() {
       </div> : <div className='flex'>
 
 
+
+       
         <SideBar />
 
-        <div className="bg-black text-white min-h-screen  lg:ml-36 lg:-mt-3 ">
+        <div className="bg-black text-white min-h-screen  lg:ml-36 lg:-mt-3 mt-7 ">
 
           <main className="max-w-full mx-auto px-6 py-8  sm:mt-24 ">
             <div className="flex">

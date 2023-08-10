@@ -28,7 +28,11 @@ const CreateVideo = () => {
 
   const handleVideoUpload = (event) => {
     const file = event.target.files[0];
-    setSelectedVideo(URL.createObjectURL(file));
+    if (file.type.startsWith('video/')) {
+      setSelectedVideo(URL.createObjectURL(file));
+    } else {
+      toast.error("invalid file")
+    }
   };
 
   const handleClearSelection = () => {

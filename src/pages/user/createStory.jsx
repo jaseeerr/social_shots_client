@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import SideBar from '../../components/user/sideBar';
 import { getCroppedImg } from '../../utils/croputils'; // Import your crop utility function
 import ReactEasyCrop from 'react-easy-crop'
@@ -33,7 +33,7 @@ const CreateStory = () => {
 
    
     const file = event.target.files[0];
-    if(!file.type.startsWith('image/'))
+    if(!file?.type.startsWith('image/'))
     {
   
       toast.error("Invalid File")
@@ -109,20 +109,6 @@ const CreateStory = () => {
       }
 
 
-      // axiosInstance.post(
-      //     'uploadProduct',
-      //     data1
-      //   ).then((response1)=>{
-
-
-      //     toast("✅ Product Uploaded")
-
-          
-      //     goto("/profile")
-
-          
-
-      //   })
 
       
 
