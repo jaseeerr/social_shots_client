@@ -7,7 +7,7 @@ function UserCard(data) {
   const axiosInstance = MyAxiosInstance(1)
  const goto = useNavigate()
 
-
+console.log(data)
  
   // const {id, username, dp, following, followers, postCount, accountStatus, reports} = data?.data
   const { data: {
@@ -18,7 +18,8 @@ function UserCard(data) {
     followers,
     postCount,
     accountStatus,
-    reports
+    reports,
+    accountType
   } = {} } = data || {};
 
   const [block1,setBlock1] = useState(accountStatus)
@@ -49,10 +50,9 @@ function UserCard(data) {
     <div className="flex flex-col items-center pb-10">
          <img className="w-24 h-24 mb-3 rounded-full shadow-lg object-cover" src={dp ? IMG_CDN+dp : "https://flowbite.com/docs/images/people/profile-picture-3.jpg"} alt="Bonnie image"/>
           <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">{username? username : "Bonnie Green"}</h5>
-        <span className="text-sm text-gray-500 dark:text-gray-400">{followers? followers :"90"} Followers</span>
-        <span className="text-sm text-gray-500 dark:text-gray-400">{following ? following :"72"} Following</span>
-        <span className="text-sm text-gray-500 dark:text-gray-400">{postCount ? postCount : 0} Posts</span>
-        <span className="text-sm text-gray-500 dark:text-gray-400">{reports ? reports : 0} Reports</span>
+        <span className="text-sm text-gray-500 dark:text-gray-400">{followers && followers } Followers | {following && following } Following</span>
+        <span className="text-sm text-gray-500 dark:text-gray-400">{postCount && postCount } Posts | {reports && reports } Reports</span>
+        <span className="text-sm text-gray-500 dark:text-gray-400">Account Type: {accountType && accountType ? <span>Private</span> : <span>Public</span> } </span>
         <span className="text-sm text-gray-500 dark:text-gray-400">Account Status: {block1 ? (<span className='text-red-600'>Suspened</span>) : (<span className='text-green-600'>Active</span>)} </span>
         <div className="flex mt-4 space-x-3 md:mt-6">
           {!block1 ?

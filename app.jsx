@@ -23,6 +23,7 @@ import AdminNavbar from "./src/components/admin/adminNavbar";
 import AdminLogin from "./src/pages/admin/login";
 import UserList from "./src/pages/admin/userList";
 import PostList from "./src/pages/admin/postList";
+import Chat from "./src/pages/user/Chat";
 import Err from "./src/pages/user/error";
 const images = []
 const images1 = [
@@ -129,7 +130,11 @@ const AppRouter = createBrowserRouter([
             {
                 path:"/explore",
                 element: <Explore />
-            }
+            },
+            {
+                path:"/chat",
+                element: <Chat />
+            },
             
         ]
         
@@ -152,6 +157,7 @@ const AppRouter = createBrowserRouter([
         path:"/newPassword/:id",
         element: <NewPassword />
     },
+   
 
     {
         path:"/admin",

@@ -1,7 +1,7 @@
 import React from 'react'
 import { IMG_CDN, VIDEO_CDN } from '../../config/urls';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash,faEye } from '@fortawesome/free-solid-svg-icons';
 import MyAxiosInstance from '../../utils/axios';
 function PostCard(data) {
 const axiosInstance = MyAxiosInstance(1)
@@ -46,6 +46,7 @@ const axiosInstance = MyAxiosInstance(1)
         <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Caption: {caption ? caption : "no caption"}</p>
         <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">❤️{likes ? likes.length : 0}  💬{comments ? comments.length : 0}</p>
         <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Reports: {reported ? reported.length : 0}</p>
+      
         <button className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 ">
             Delete Post
              <FontAwesomeIcon icon={faTrash} style={{color: "#ffffff",}} className='ml-2' />
