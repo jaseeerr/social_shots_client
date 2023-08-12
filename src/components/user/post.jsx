@@ -33,7 +33,7 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments,
 
   const goto = useNavigate()
   const goProfile = ()=>{
-    goto('/profile')
+    goto(`/${username}`)
   }
 
   const getShortlist = ()=>{
@@ -215,10 +215,10 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments,
             <img onClick={goProfile}
               src={dp ? dp :"https://i1.sndcdn.com/avatars-000252187355-42nbzf-t500x500.jpg"}
               alt="User Profile"
-              className="w-8 h-8 rounded-full object-cover"
+              className="w-8 h-8 rounded-full object-cover cursor-pointer"
             />
           </div>
-          <div className="ml-3">
+          <div onClick={goProfile} className="ml-3 cursor-pointer">
             <span className="font-semibold text-white">{username}</span>
           </div>
 

@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Inbox from '../../components/user/inbox'
 function Chat() {
 
-    const [message,setMessage] = useState("")
+  useEffect(()=>{
 
-    const sendMessage = ()=>{
-        socket.emit('send_message',{message:`Helloo ${message}`})
+    if(!localStorage.getItem('userToken'))
+    {
+      location.href = "/login"
     }
+    
+  },[])
+  
   return (
    <>
   

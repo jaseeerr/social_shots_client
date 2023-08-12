@@ -187,6 +187,25 @@ function MyProfile() {
   }
 
 
+  const report = async()=>{
+
+    let response = await axiosInstance.get(`reportAccount/${userdata._id}`)
+    if(response.data.success)
+    {
+      toast.success("Reported")
+    }
+    else
+    {
+      toast.error("Error occurred")
+    }
+      setShowOptions(false)
+  }
+
+  const direct = ()=>{
+
+    goto(`/direct/${userdata._id}`)
+  }
+
 
 
 
@@ -252,6 +271,7 @@ function MyProfile() {
   const [showPhoneModal, setShowPhoneModal] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [showAcTypeModal, setShowAcTypeModal] = useState(false)
+  const [showOptions,setShowOptions] = useState(false)
 
 
 
@@ -384,11 +404,20 @@ function MyProfile() {
                           Follow
                         </button>
                     }
+                    {
+                      !userdata?.private || followingBtn ?  
+                      <button onClick={direct} className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm hidden md:block lg:block" >
+                      Message
+                    </button>
+                    : null
+                    }
                     {/* <button onClick={()=>follow1()} className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm hidden md:block lg:block" >
                       Follow
                     </button> */}
 
-                    <button className="ml-4  text-white px-2 py-1 rounded-lg text-sm hidden md:block lg:block">
+                    <button onClick={()=>{
+                              setShowOptions(true)
+                    }} className="ml-4  text-white px-2 py-1 rounded-lg text-sm hidden md:block lg:block">
                       <FontAwesomeIcon icon={faEllipsis} style={{ color: "#ffffff", }} />
                     </button>
                   </div>
@@ -429,7 +458,9 @@ function MyProfile() {
                         </button>
                     }
 
-                    <button className="mt-2 sm:ml-4 text-white px-2 py-1 rounded-lg text-sm">
+                    <button onClick={()=>{
+                              setShowOptions(true)
+                    }} className="mt-2 sm:ml-4 text-white px-2 py-1 rounded-lg text-sm">
                       <FontAwesomeIcon icon={faEllipsis} style={{ color: "#ffffff", }} />
                     </button>
                   </span>
@@ -1122,6 +1153,43 @@ function MyProfile() {
                   <button
                     className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm"
                     onClick={handleCloseModal}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+
+
+            {/* Message/Block Modal */}
+            {showOptions && (
+              <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+                <div className="bg-black p-8 rounded-lg w-80">
+                 
+             
+
+                
+                {!userdata.private &&
+                    <button onClick={direct} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold w-full rounded mb-2" >
+                    Message
+                  </button>
+                  }
+               
+                
+                <button onClick={report}  className="bg-red-600 hover:bg-red-700 text-white font-semibold w-full rounded ">
+                Report 
+                </button> 
+
+              
+
+              
+                  
+                       
+ 
+               
+                  <button
+                    className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm w-full"
+                    onClick={()=>setShowOptions(false)}
                   >
                     Close
                   </button>

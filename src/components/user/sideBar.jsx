@@ -166,11 +166,9 @@ axiosInstance.get('myData').then((response)=>{
          
           
             <li className="mb-4 p-2">
-              <a href="#" className="text-white hover:text-gray-300 flex items-center">
+              <Link to="/direct/0" className="text-white hover:text-gray-300 flex items-center">
               <FontAwesomeIcon icon={faMessage} style={{color: "#ffffff",}} className='mr-2' />
-              
-                
-              </a>
+              </Link>
             </li>
 
             
@@ -231,11 +229,11 @@ axiosInstance.get('myData').then((response)=>{
             </li>
           
             <li className="mb-4 p-2 hover:bg-gray-400 rounded-md">
-              <a href="#" className="text-white  flex items-center">
+              <Link to="/direct/0" className="text-white  flex items-center">
               <FontAwesomeIcon icon={faMessage} style={{color: "#ffffff",}} className='mr-2' />
               
                 Messages
-              </a>
+              </Link>
             </li>
 
             <li className="mb-4 p-2 hover:bg-gray-400 rounded-md">

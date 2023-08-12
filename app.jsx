@@ -132,7 +132,7 @@ const AppRouter = createBrowserRouter([
                 element: <Explore />
             },
             {
-                path:"/chat",
+                path:"/direct/:id",
                 element: <Chat />
             },
             
