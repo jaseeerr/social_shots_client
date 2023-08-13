@@ -161,7 +161,7 @@ const Home = () => {
 
 
 
-          {suggested.length != 0 && suggested.map((post, key) => {
+          {suggested.length != 0 && suggested.map((post) => {
 
             return (
               <PostCard
@@ -176,7 +176,7 @@ const Home = () => {
                 id={post._id}
                 uid={post.uid}
                 comments={post.comments}
-                key={post._id}
+               
 
               />
             )

@@ -298,7 +298,7 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments,
 likelist.map((x)=>{
   return(
 
-    <div className="flex items-center mb-4">
+    <div key={x.uid} className="flex items-center mb-4">
               <div className="flex-shrink-0">
                 <img
                   src={x.dp ? IMG_CDN+x.dp :"https://i1.sndcdn.com/avatars-000252187355-42nbzf-t500x500.jpg"}
@@ -392,9 +392,9 @@ likelist.map((x)=>{
   </div> */}
 
   { commentList.length!=0 ?
-    commentList.map((comment, key)=>{
+    commentList.map((comment)=>{
       return(
-        <div className='mb-4 mt-2' key={key}>
+        <div className='mb-4 mt-2' key={comment.uid}>
   <div className="flex items-center mb-4 ">
               <div className="flex-shrink-0">
                 <img
