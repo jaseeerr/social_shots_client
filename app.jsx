@@ -24,6 +24,7 @@ import AdminLogin from "./src/pages/admin/login";
 import UserList from "./src/pages/admin/userList";
 import PostList from "./src/pages/admin/postList";
 import Chat from "./src/pages/user/Chat";
+import Notifications from "./src/pages/user/notifications";
 import Err from "./src/pages/user/error";
 const images = []
 const images1 = [
@@ -135,6 +136,10 @@ const AppRouter = createBrowserRouter([
                 path:"/direct/:id",
                 element: <Chat />
             },
+            {
+                path:"/notifications",
+                element: <Notifications />
+            },
             
         ]
         
@@ -143,7 +148,7 @@ const AppRouter = createBrowserRouter([
     },
     {
         path:"/login",
-        element: <Provider store={Store}> <Login images={images} /></Provider>
+        element: <Provider store={Store}> <Login /></Provider>
     },
     {
         path:"/signup",

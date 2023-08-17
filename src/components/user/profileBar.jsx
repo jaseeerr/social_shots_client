@@ -81,7 +81,7 @@ function ProfileBar() {
     {suggested?.length!=0 ? suggested?.map((x)=>{
 
 return(
- <Link to={`/${x?.username}`}>
+ <Link  key={x?.username} to={`/${x?.username}`}>
   <div className="bg-blue-950 p-4 mt-2 rounded-lg shadow flex">
 
 <img src={IMG_CDN+x?.dp} alt="" className='rounded-full w-10 h-10 object-cover' />     

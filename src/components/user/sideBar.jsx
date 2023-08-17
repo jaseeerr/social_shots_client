@@ -2,40 +2,81 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faMessage, faMagnifyingGlass, faBolt, faCompass, faSquarePlus  } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router';
-import logoImage from '../../../public/assets/LOGO1.png'; // Replace with the actual path to your logo image
-import logoRec from '../../../public/assets/LOGO-REC1.png'; // Replace with the actual path to your logo image
-
-import icon from "../../../public/assets/icon.png"
+import logoImage from '../../../public/assets/LOGO1.png'; 
+import logoRec from '../../../public/assets/LOGO-REC1.png'; 
+import io from 'socket.io-client'
+const socket = io.connect('http://localhost:3000')
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { IMG_CDN } from '../../config/urls';
 import { setClickSearch } from '../../utils/commonSlice';
 import { useDispatch } from 'react-redux';
-import { updateUserdata } from '../../utils/userSlice';
 import MyAxiosInstance from '../../utils/axios';
 const SideBar = () => {
   const dispatch = useDispatch()
   const axiosInstance = MyAxiosInstance()
 const [username,setUsername] = useState(null)
 const [dp,setDp] = useState(null)
-  
+const userdata = useSelector(store=>store.userInfo.userdata)
+const [showModal,setShowModal] = useState(false)
+const [notifyCount,setNotifyCount] = useState(0)
+const [messageCount,setMessageCount] = useState(0)
+//useEffects
 
-  
-
+//default
   useEffect(()=>{
+    let data = userdata?._id
+  socket.emit('join_room',data)
 
 axiosInstance.get('myData').then((response)=>{
-
+ axiosInstance.get("notifyCount").then((resp)=>{
+axiosInstance.get('messageCount').then((resp1)=>{
 
   setUsername(response?.data?.username)
   setDp(response?.data?.dp)
- 
+  setNotifyCount(resp.data)
+  setMessageCount(resp1.data)
+
+})
+
+ })
+
 
 })
 
   },[])
 
-  const [showModal,setShowModal] = useState(false)
+  //socket
+  useEffect(()=>{
+
+    //incoming notification
+    socket.on("notify",(data)=>{
+
+      console.log("incomingg")
+      console.log(data)
+      setNotifyCount(data)
+
+    })
+
+    //notification removed
+
+    socket.on("notification_removed",(data)=>{
+
+      setNotifyCount(data)
+    })
+
+    //Message Count
+
+    socket.on("receive_message",async(data)=>{
+
+      console.log("incomg text")
+
+      let response = await axiosInstance.get('messageCount')
+      setMessageCount(response.data)
+    })
+
+
+  },[socket])
  
 
   const goto = useNavigate()
@@ -103,17 +144,17 @@ axiosInstance.get('myData').then((response)=>{
       clickSearch()
       goto('/explore')
     }}>
-              <a href="#" className="text-white hover:text-gray-300 flex items-center">
+              <a href="" className="text-white hover:text-gray-300 flex items-center">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="mr-2" />
                 
               </a>
             </li>
 
             <li className="mb-4 p-2 ">
-              <a href="#" className="text-white hover:text-gray-300 flex items-center">
-                <FontAwesomeIcon icon={faBolt} className="mr-2" />
+            <Link to="/notifications" className="text-white hover:text-gray-300 flex items-center">
+              {notifyCount >0 ?  <FontAwesomeIcon icon={faBolt} className="mr-2" style={{color: "#e60000",}}  /> :  <FontAwesomeIcon icon={faBolt} className="mr-2"  /> }
                 
-              </a>
+              </Link>
             </li>
             </ul>
     </div>
@@ -122,7 +163,7 @@ axiosInstance.get('myData').then((response)=>{
    
     <ul className="flex justify-evenly py-2">
     <li className="mb-4 p-2 ">
-              <a href="#" className="text-white hover:text-gray-300 flex items-center">
+              <a href="" className="text-white hover:text-gray-300 flex items-center">
                 {/* <FontAwesomeIcon icon={faHome} className="mr-2" /> */}
                
                 
@@ -141,23 +182,23 @@ axiosInstance.get('myData').then((response)=>{
     <nav className="fixed bottom-0 left-0 w-full h-14 bg-black text-white  md:block lg:hidden sm:block ">
     <ul className="flex justify-evenly py-2">
     <li className="mb-4 p-2 ">
-              <a href="#" onClick={goHome} className="text-white hover:text-gray-300 flex items-center">
+              <a href="" onClick={goHome} className="text-white hover:text-gray-300 flex items-center">
                 <FontAwesomeIcon icon={faHome} className="mr-2" />
                 
               </a>
             </li>
 
             <li className="mb-4 p-2" onClick={()=>goto('/explore')}>
-              <a href="#" className="text-white hover:text-gray-300 flex items-center">
-              <FontAwesomeIcon icon={faCompass} style={{color: "#ffffff",}} className='mr-2' />
+              <a href="" className="text-white hover:text-gray-300 flex items-center">
+              <FontAwesomeIcon icon={faCompass} style={{color: "ffffff",}} className='mr-2' />
               
                  
               </a>
             </li>
 
             <li className="mb-4 p-2" onClick={()=>setShowModal(true)}>
-              <Link to='#' className="text-white hover:text-gray-300 flex items-center">
-              <FontAwesomeIcon icon={faSquarePlus} style={{color: "#ffffff",}} className='mr-2' />
+              <Link to='' className="text-white hover:text-gray-300 flex items-center">
+              <FontAwesomeIcon icon={faSquarePlus} style={{color: "ffffff",}} className='mr-2' />
               
                  
               </Link>
@@ -167,7 +208,7 @@ axiosInstance.get('myData').then((response)=>{
           
             <li className="mb-4 p-2">
               <Link to="/direct/0" className="text-white hover:text-gray-300 flex items-center">
-              <FontAwesomeIcon icon={faMessage} style={{color: "#ffffff",}} className='mr-2' />
+                {messageCount >0 ?  <FontAwesomeIcon icon={faMessage} style={{color: "#e60000",}} className='mr-2' /> :  <FontAwesomeIcon icon={faMessage} style={{color: "ffffff",}} className='mr-2' /> }
               </Link>
             </li>
 
@@ -186,7 +227,7 @@ axiosInstance.get('myData').then((response)=>{
             </li>
     </ul>
   </nav>
-  <FontAwesomeIcon icon={faSquarePlus} style={{color: "#ffffff",}} />
+  <FontAwesomeIcon icon={faSquarePlus} style={{color: "ffffff",}} />
   {/* lg sidebar */}
     <div className="flex h-screen lg:ml-60 font-bold">
     <div className="w-64 bg-black text-white fixed left-0 top-0 bottom-0 hidden lg:block md:hidden sm:hidden lg:border-r  ">      
@@ -194,7 +235,7 @@ axiosInstance.get('myData').then((response)=>{
           <img src={logoImage} alt="Logo" className="w-full mb-4" />
           <ul>
             <li className="mb-4 p-2 hover:bg-gray-400 rounded-md">
-              <a href="#" onClick={goHome} className="text-white  flex items-center">
+              <a href="" onClick={goHome} className="text-white  flex items-center">
                 <FontAwesomeIcon icon={faHome} className="mr-2" />
                 Home
               </a>
@@ -202,7 +243,7 @@ axiosInstance.get('myData').then((response)=>{
 
             <li className="mb-4 p-2  hover:bg-gray-400 rounded-md" onClick={()=>goto('/explore')}>
               <a  className="text-white  flex items-center">
-              <FontAwesomeIcon icon={faCompass} style={{color: "#ffffff",}} className='mr-2' />
+              <FontAwesomeIcon icon={faCompass} style={{color: "ffffff",}} className='mr-2' />
               
                 Explore
               </a>
@@ -212,16 +253,16 @@ axiosInstance.get('myData').then((response)=>{
               clickSearch()
               goto('/explore')
             }}>
-              <a href="#" className="text-white  flex items-center" >
-              <FontAwesomeIcon icon={faMagnifyingGlass} style={{color: "#ffffff",}} className='mr-2' />
+              <a href="" className="text-white  flex items-center" >
+              <FontAwesomeIcon icon={faMagnifyingGlass} style={{color: "ffffff",}} className='mr-2' />
               
                 Search
               </a>
             </li>
 
             <li className="mb-4 p-2 hover:bg-gray-400 rounded-md" onClick={()=>setShowModal(true)}>
-              <Link to="#" className="text-white  flex items-center"> 
-              <FontAwesomeIcon icon={faSquarePlus} style={{color: "#ffffff",}}  className='mr-2' />
+              <Link to="" className="text-white  flex items-center"> 
+              <FontAwesomeIcon icon={faSquarePlus} style={{color: "ffffff",}}  className='mr-2' />
 
               
                 Create
@@ -230,18 +271,18 @@ axiosInstance.get('myData').then((response)=>{
           
             <li className="mb-4 p-2 hover:bg-gray-400 rounded-md">
               <Link to="/direct/0" className="text-white  flex items-center">
-              <FontAwesomeIcon icon={faMessage} style={{color: "#ffffff",}} className='mr-2' />
+              <FontAwesomeIcon icon={faMessage} style={{color: "ffffff",}} className='mr-2' />
               
-                Messages
+                Messages {messageCount>0 && <span className='ml-2 bg-red-600 rounded-full px-2'>{messageCount}</span> }
               </Link>
             </li>
 
             <li className="mb-4 p-2 hover:bg-gray-400 rounded-md">
-              <a href="#" className="text-white  flex items-center">
-              <FontAwesomeIcon icon={faBolt} style={{color: "#ffffff",}} className='mr-2' />
+              <Link to="/notifications" className="text-white  flex items-center">
+              <FontAwesomeIcon icon={faBolt} style={{color: "ffffff",}} className='mr-2' />
               
-                Notification
-              </a>
+                Notification {notifyCount>0 && <span className='ml-2 bg-red-600 rounded-full px-2'>{notifyCount}</span> }
+              </Link>
             </li>
 
             <li>

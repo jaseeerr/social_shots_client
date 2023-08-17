@@ -187,15 +187,15 @@ const CreateStory = () => {
                 ) : (
                   <div className="max-h-60">
                     <ReactEasyCrop
-                      image={selectedImage}
-                      crop={crop}
-                      zoom={zoom}
-                      aspect={1}
-                      onCropChange={setCrop}
-                      onZoomChange={setZoom}
-                      onCropComplete={handleCropComplete}
-                      showGrid={false}
-                    />
+                image={selectedImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={9 / 16} // Set the aspect ratio to 9:16 (Instagram story ratio)
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={handleCropComplete}
+                showGrid={false}
+              />
                   </div>
                 )}
                 <button

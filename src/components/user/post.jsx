@@ -5,7 +5,8 @@ import { faComment,faHeart,faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import jwt from "jsonwebtoken"
 import MyAxiosInstance from '../../utils/axios';
 import { Toaster, toast } from 'react-hot-toast';
-
+import io from 'socket.io-client'
+const socket = io.connect('http://localhost:3000')
 import { IMG_CDN } from '../../config/urls';
 
 const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments, type, video }) => {
@@ -182,6 +183,18 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments,
 
       if(response.data.success)
       {
+
+       const data = {
+        pid:id,
+        from :myData._id,
+        to:uid,
+        type:"like",
+        img:type=="img" ? image : "https://cdn4.iconfinder.com/data/icons/ios-edge-glyph-12/25/Video-Play-512.png",
+
+       }
+
+       socket.emit("notification",data)
+
         setLike(true)
         likes.push(myData?._id)
       }
@@ -195,6 +208,17 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments,
 
       if(response.data.success)
       {
+
+        const data = {
+          pid:id,
+          from :myData._id,
+          to:uid,
+          type:"like",
+          img:type=="img" ? image : "https://cdn4.iconfinder.com/data/icons/ios-edge-glyph-12/25/Video-Play-512.png",
+  
+         }
+
+        socket.emit("remove_notification",data)
         setLike(false)
         likes.pop()
       }
@@ -419,6 +443,15 @@ onClick={()=>{
  axiosInstance.post('deletecomment',dat2).then((response)=>{
 
   
+  const data = {
+    pid:id,
+    from :myData._id,
+    to:uid,
+    type:"comment",
+    img:type=="img" ? image : "https://cdn4.iconfinder.com/data/icons/ios-edge-glyph-12/25/Video-Play-512.png",
+   }
+
+  socket.emit("remove_notification",data)
 
    getShortlist1(response.data.data3)
 
@@ -512,6 +545,16 @@ null}
             
           
           })
+          const data = {
+            pid:id,
+            from :myData._id,
+            to:uid,
+            type:"comment",
+            img:type=="img" ? image : "https://cdn4.iconfinder.com/data/icons/ios-edge-glyph-12/25/Video-Play-512.png",
+    
+           }
+
+           socket.emit('notification',data)
 
           document.getElementById('commentInput').value = ""
         }}

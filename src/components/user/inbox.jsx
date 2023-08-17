@@ -1,4 +1,3 @@
-const img = "data:image/jpeg;base64,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"
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -6,17 +5,19 @@ import io from 'socket.io-client'
 const socket = io.connect('http://localhost:3000')
 import MyAxiosInstance from '../../utils/axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft,faFaceSmile } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 import { IMG_CDN } from '../../config/urls';
 import Picker from '@emoji-mart/react'
+import TypingAnim from './typingAnim';
+import { useSelector } from 'react-redux';
 
 function Inbox() {
     const axiosInstance = MyAxiosInstance()
     const { id } = useParams()
+    let uid
     const goto = useNavigate()
 
     const [messages, setMessages] = useState([])
-    const [change,setChange] = useState(0)
     const [currentMessage, setCurrentMessage] = useState("")
     const [chatList, setChatList] = useState([])
     const [senderId, setSenderId] = useState("")
@@ -24,40 +25,38 @@ function Inbox() {
     const [receiverUsername, setReceiverUsername] = useState("")
     const [receiverDp, setReceiverDp] = useState("")
     const [myId, setMyId] = useState()
-    const [myData,setMyData] = useState()
     const chatContainerRef = useRef(null);
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
-
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [typing,setTyping] = useState(false)
+    const userdata = useSelector(store =>store.userInfo.userdata)
 
 
     //functions
 
     //mark seen
-    
+
     const markMessagesAsSeen = async (receiver) => {
         try {
-                
-          
-                
-            console.log("id: ",receiver,id);
+
+
+
             await axiosInstance.post('mark-messages-as-seen', {
                 sender1: id,
-                receiver1: receiver  
+                receiver1: userdata._id
             })
 
-            if(receiver && id && id!=0)
-            {
-                socket.emit('message_seen',{sender:id,receiver:receiver})
+            if (receiver && id && id != 0) {
+                socket.emit('message_seen', { sender: id, receiver: receiver })
             }
-          
-             
+
+
         } catch (error) {
             console.error('Failed to mark messages as seen:', error);
         }
     }
 
 
-   //send message
+    //send message
 
     const sendMessage = async () => {
 
@@ -76,7 +75,8 @@ function Inbox() {
         }
 
         await socket.emit('send_message', messageDate)
-        if (messages[messages.length - 1]?.date != messageDate.date) {
+        if (messages[messages.length - 1]?.date != messageDate.date && messageDate.receiver==id) {
+            console.log("from send message")
             setMessages((x) => [...x, messageDate])
         }
 
@@ -85,13 +85,23 @@ function Inbox() {
 
     const getData = async () => {
         let response = await axiosInstance.get('chatlist')
+        console.log(response)
+        response.data.list.forEach(element => {
+            if(element.id==id)
+            {
+                element.newMessage = false
+            }
+        });
+        response.data.list.sort((a, b) => (b.newMessage ? 1 : -1));
         setChatList(response.data.list)
         setMyId(response.data.myId)
+        uid = response.data.myId
 
         let temp
         if (id != 0) {
             let response1 = await axiosInstance.get(`getChat/${id}`)
-            temp =response1.data.receiverId
+            temp = response1.data.receiverId
+            
             setReceiverDp(response1.data.receiverDp)
             setReceiverUsername(response1.data.receiverName)
             setMessages(response1.data.content)
@@ -99,80 +109,114 @@ function Inbox() {
             setReceiverId(response1.data.receiverId)
 
         }
-      
+
         socket.emit("join_room", response.data.myId)
-        if(id!=0)
-        {
-           
-            console.log("temp id:",temp)
-                await markMessagesAsSeen(temp);
-       
-           
-        } 
+        if (id != 0) {
+
+            await markMessagesAsSeen(temp);
+
+
+        }
 
     }
 
-    
+
 
     const go = () => {
         goto(`/${receiverUsername}`)
     }
     const direct = (id) => {
-        goto(`/direct/${id}`)
+        // goto(`/direct/${id}`)
+        location.href =`/direct/${id}`
     }
 
 
-    
-    
+
+
     //use effects
 
 
 
     //socket
     useEffect(() => {
-        socket.on("receive_message", (data) => {
+        socket.on("receive_message", async (data) => {
+
+           console.log(data)
 
             if (messages[messages.length - 1]?.date != data.date) {
-                setMessages((x) => [...x, data])
+                console.log("from effect")
+                if(data.sender == id)
+                {
+                    setMessages((x) => [...x, data])
+                }
+              
             }
 
-            console.log(data)
-            console.log("gotcha")
+           
 
-             markMessagesAsSeen(data.receiver)
+            markMessagesAsSeen(data.receiver)
+
+            if(data.sender!==id)
+            {
+
+                let response = await axiosInstance.get('chatlist')
+                const temp = response.data.list.map((x)=>{
+                    if(x.id==data.sender)
+                    {
+                        x.newMessage = true
+                    }
+                    return x
+                })
+                temp.sort((a, b) => (b.newMessage ? 1 : -1));
+                console.log("temppppp")
+                console.log(data);
+                console.log(response.data.list)
+                setChatList(temp)
+                goto(`/direct/${id}`)
+            }
+
+           
 
         })
 
-        socket.on('message_seen', async(data)=>{
+        socket.on('message_seen', async (data) => {
 
-            console.log("message seen",data)
-            setChange(change+1)
-            console.log(messages);
-            // setMessages(response1.data.content)
-        
- 
+            
+             let response1 = await axiosInstance.get(`getChat/${id}`)
+             setMessages(response1.data.content)
         })
 
-        
+        socket.on('typing', async (data) => { 
+            data.typing && data.room == uid && data.visible==id ?  setTyping(true)  : setTyping(false)
+         
+          
+
+        })
+
+     
+
+
 
 
 
     }, [socket])
 
-
-// id
+    
     useEffect(() => {
 
+      
 
         getData()
+        setTyping(false)
         socket.emit("join_room", id)
 
-
+       
+       
 
 
     }, [id])
 
-// message
+    // message
     useEffect(() => {
 
         if (id != 0) {
@@ -180,6 +224,13 @@ function Inbox() {
         }
 
     }, [messages]);
+
+    //typing
+    useEffect(()=>{
+
+        currentMessage.length !=0 ? socket.emit("typing",{room:id,typing:true,visible:myId}) : socket.emit("typing",{room:myId,typing:false,visible:id})
+
+    },[currentMessage])
 
 
     return (
@@ -190,20 +241,28 @@ function Inbox() {
                     <Link to={'/'} className='text-lg text-white  font-semibold mb-4'>
                         <FontAwesomeIcon icon={faArrowLeft} style={{ color: "#ffffff", }} /> Back</Link>
 
-                        <h4 className='text-white mt-4 border-b w-fit'>Messages</h4>
+                    <h4 className='text-white mt-4 border-b w-fit'>Messages</h4>
 
-                    {chatList.length != 0 ? 
+                    {chatList.length != 0 ?
 
 
                         <ul className="space-y-2 mt-7 text-white ">
 
-                            {chatList.map((x) => {
+                            {chatList?.map((x) => {
 
                                 return (
 
-                                    <li key={x.id} onClick={() => { direct(x.id) }} className="flex items-center space-x-2 border-b border-gray-500 pb-3 cursor-pointer">
-                                        <img src={IMG_CDN + x.dp} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
-                                        <span className="text-sm font-medium">{x.username}</span>
+                                    <li key={x?.id} onClick={() => {
+                                        
+                                         direct(x?.id) 
+                                      
+                                         }} className="  border-b border-gray-500 pb-3 cursor-pointer">
+                                        <span className='flex items-center space-x-2'>
+                                        <img src={IMG_CDN + x?.dp} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
+                                        <span className="text-sm font-medium">{x?.username}</span> 
+                                        </span>
+                                       
+                                        {x?.newMessage ? <span className="text-sm font-bold flex-none ml-10">New Message</span> : <span className="text-sm font-semibold flex-none ml-10 text-gray-500">View Messages</span> }
                                     </li>
                                 )
                             })}
@@ -248,28 +307,28 @@ function Inbox() {
                             <div className="bg-black p-4 h-96 rounded-lg overflow-y-scroll flex-grow" ref={chatContainerRef}>
                                 <div className="flex flex-col space-y-2">
 
-                                    {messages.length != 0 && messages.map((x) => {
+                                    {messages?.length != 0 && messages.map((x) => {
 
                                         return (
-                                            x.sender == id
+                                            x?.sender == id
                                                 ?
 
-                                                <div key={x.date} className="flex items-start space-x-2 flex-wrap">
+                                                <div key={x?.date} className="flex items-start space-x-2 flex-wrap">
                                                     <img src={IMG_CDN + receiverDp} alt="User Avatar" className="w-6 h-6 rounded-full object-cover" />
                                                     <span className="bg-black text-white px-2 py-1 rounded-lg inline-block" style={{ maxWidth: "80%", wordWrap: "break-word" }}>
-                                                        {x.content} <span className='text-white' style={{ fontSize: "8px" }}>{x.time}</span>
+                                                        {x?.content} <span className='text-white' style={{ fontSize: "8px" }}>{x?.time}</span>
                                                     </span>
                                                 </div>
 
                                                 :
 
-                                                <div key={x.date} className="flex items-start space-x-2 justify-end">
+                                                <div key={x?.date} className="flex items-start space-x-2 justify-end">
                                                     <span className="bg-black text-white px-2 py-1 rounded-lg inline-block" style={{ maxWidth: "80%", wordWrap: "break-word" }}>
-                                                        <span className='text-white' style={{ fontSize: "8px" }}>{x.time}</span>  {x.content}
+                                                        <span className='text-white' style={{ fontSize: "8px" }}>{x?.time}</span>  {x?.content}
                                                     </span>
-                                                    {x.sender !== id && x.seenByReceiver && (
-                    <span className="text-xs text-gray-400 mt-1">Seen</span>
-                )}
+                                                    {x?.sender !== id && x?.seenByReceiver && (
+                                                        <span className="text-xs text-gray-400 mt-1">Seen</span>
+                                                    )}
                                                     {/* <img src={img} alt="User Avatar" className="w-6 h-6 rounded-full" /> */}
 
                                                 </div>
@@ -278,9 +337,17 @@ function Inbox() {
                                         )
                                     })}
 
-                                     
-                                 
-                                  </div>
+
+                                       <div  className="flex items-start space-x-2 flex-wrap" >
+                                       {typing && 
+                                       <TypingAnim/>      
+                                       }
+                                       </div>
+                                   
+
+
+
+                                </div>
                             </div>
 
                             {/* Chat Input */}
@@ -288,9 +355,9 @@ function Inbox() {
                                 {/* Emoji Picker Button */}
                                 <button
                                     onClick={() => setShowEmojiPicker(!showEmojiPicker)} // Step 2: Toggle emoji picker visibility
-                                    className="bg-blue-500 text-white p-2 rounded-full"
+                                    className="bg-blue-500 text-white p-2 rounded-l-md "
                                 >
-                                  <FontAwesomeIcon icon={faFaceSmile} style={{color: "#ffffff",}} />
+                                    <FontAwesomeIcon icon={faFaceSmile} style={{ color: "#ffffff", }} />
                                 </button>
 
                                 {/* Emoji Picker */}
@@ -304,14 +371,14 @@ function Inbox() {
                                         />
                                     </div>
                                 )}
-                                <input type="text"
+                                <input type="text" autoFocus
                                     onKeyDown={(e) => {
                                         if (e.key == "Enter" && e.target.value.length != 0) {
                                             sendMessage()
                                         }
 
                                     }}
-                                    value={currentMessage} onChange={(e) => setCurrentMessage(e.target.value)} placeholder="Type a message..." className="flex-grow border rounded-l-md px-3 py-2 bg-gray-800 text-white" />
+                                    value={currentMessage} onChange={(e) => setCurrentMessage(e.target.value)} placeholder="Type a message..." className="flex-grow border  px-3 py-2 bg-gray-800 text-white" />
                                 {currentMessage.length == 0
                                     ?
                                     <button className="bg-blue-400 text-white px-4 py-2 rounded-r-md">Send</button>

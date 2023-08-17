@@ -14,8 +14,15 @@ function Chat() {
   
   return (
    <>
-  <Inbox/>
+ 
 
+  <div className="hidden sm:block">
+  <Inbox/>
+    </div>
+
+    <div className="block sm:hidden">
+    <Inbox1/>
+    </div>
  
  
    

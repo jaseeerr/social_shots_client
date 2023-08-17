@@ -4,14 +4,13 @@
   import toast, {Toaster} from 'react-hot-toast';
   import { Link, useNavigate } from "react-router-dom";
   import logoImage from '../../../public/assets/LOGOBig.png';
-  import { useSelector } from "react-redux";
   import { SignInWithGoogle } from "../../utils/firebase1";
-
-
-
+import { useDispatch } from "react-redux";
+ import { updateUserdata } from "../../utils/userSlice";
   const Login = ()=>{
 
-    const verify = useSelector(store=>store.commonSlice.verify)
+    const dispatch = useDispatch()
+
     const [loader,setLoader] = useState()
     const [pass,setPass] = useState(true)
 
@@ -121,14 +120,16 @@
               axiosInstance.post('login',values).then((response)=>{
 
                   console.log(response)
+                 
                   setLoader(false)
                   if(response.data.success)
                   {
-                      toast.success("Login Successful")
+                    dispatch(updateUserdata(response.data.data))
+                    toast.success("Login Successful")
                     localStorage.setItem('userToken',response.data.token)
                     setTimeout(()=>{
                       toast.dismiss()
-                      location.href = "/"
+                      goto('/')
 
                     },1000)
                     

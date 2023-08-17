@@ -1,7 +1,5 @@
 import { createSlice  } from "@reduxjs/toolkit";
-import jwt from "jsonwebtoken"
-import MyAxiosInstance from "./axios";
-import { useState } from "react";
+
 
 
 
@@ -21,6 +19,7 @@ const userSlice = createSlice({
             state.login = action.payload
         },
         updateUserdata:(state,action)=>{
+            console.log(action.payload)
             state.userdata = action.payload
         },
         

@@ -5,15 +5,20 @@ import io from 'socket.io-client'
 const socket = io.connect('http://localhost:3000')
 import MyAxiosInstance from '../../utils/axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft,faFaceSmile } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 import { IMG_CDN } from '../../config/urls';
 import Picker from '@emoji-mart/react'
+import TypingAnim from './typingAnim';
+import { useSelector } from 'react-redux';
 
 function Inbox1() {
+    
     const axiosInstance = MyAxiosInstance()
     const { id } = useParams()
+    let uid
     const goto = useNavigate()
 
+    const [showList,setShowList] = useState(true)
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState("")
     const [chatList, setChatList] = useState([])
@@ -21,29 +26,39 @@ function Inbox1() {
     const [receiverId, setReceiverId] = useState("")
     const [receiverUsername, setReceiverUsername] = useState("")
     const [receiverDp, setReceiverDp] = useState("")
-    const [myId, setMyId] = useState('')
+    const [myId, setMyId] = useState()
     const chatContainerRef = useRef(null);
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false); // Step 1: State for emoji picker visibility
-    const [showList,setShowList] = useState(true)
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [typing,setTyping] = useState(false)
+    const userdata = useSelector(store =>store.userInfo.userdata)
 
 
+    //functions
 
+    //mark seen
 
-    const markMessagesAsSeen = async () => {
+    const markMessagesAsSeen = async (receiver) => {
         try {
-            await axiosInstance.post('/mark-messages-as-seen', {
-                userId: myId,
-                room: id // Room identifier for the chat
-            });
+
+
+
+            await axiosInstance.post('mark-messages-as-seen', {
+                sender1: id,
+                receiver1: userdata._id
+            })
+
+            if (receiver && id && id != 0) {
+                socket.emit('message_seen', { sender: id, receiver: receiver })
+            }
+
+
         } catch (error) {
             console.error('Failed to mark messages as seen:', error);
         }
     }
 
 
-
-
-
+    //send message
 
     const sendMessage = async () => {
 
@@ -62,7 +77,8 @@ function Inbox1() {
         }
 
         await socket.emit('send_message', messageDate)
-        if (messages[messages.length - 1]?.date != messageDate.date) {
+        if (messages[messages.length - 1]?.date != messageDate.date && messageDate.receiver==id) {
+            console.log("from send message")
             setMessages((x) => [...x, messageDate])
         }
 
@@ -71,87 +87,150 @@ function Inbox1() {
 
     const getData = async () => {
         let response = await axiosInstance.get('chatlist')
-
         console.log(response)
+        response.data.list.forEach(element => {
+            if(element.id==id)
+            {
+                element.newMessage = false
+            }
+        });
+        response.data.list.sort((a, b) => (b.newMessage ? 1 : -1));
+        setChatList(response.data.list)
+        setMyId(response.data.myId)
+        uid = response.data.myId
 
+        let temp
         if (id != 0) {
             let response1 = await axiosInstance.get(`getChat/${id}`)
+            temp = response1.data.receiverId
+            
             setReceiverDp(response1.data.receiverDp)
             setReceiverUsername(response1.data.receiverName)
             setMessages(response1.data.content)
             setSenderId(response1.data.senderId)
             setReceiverId(response1.data.receiverId)
-            
+
         }
-        setChatList(response.data.list)
-        setMyId(response.data.myId)
+
         socket.emit("join_room", response.data.myId)
-        if(id!=0)   await markMessagesAsSeen();
-      
+        if (id != 0) {
+
+            await markMessagesAsSeen(temp);
+
+
+        }
+
     }
+
+
 
     const go = () => {
         goto(`/${receiverUsername}`)
     }
     const direct = (id) => {
-        setShowList(false)
-        goto(`/direct/${id}`)
+        // goto(`/direct/${id}`)
+        location.href =`/direct/${id}`
     }
 
+
+
+
+    //use effects
+
+
+
+    //socket
     useEffect(() => {
+        socket.on("receive_message", async (data) => {
 
-        if(id==0)
-        {
-            setShowList(true)
-        }
-        else
-        {
-            setShowList(false)
-        }
-        socket.on("receive_message", (data) => {
+           console.log(data)
 
-            console.log(data)
-            console.log("INCOMINGG");
             if (messages[messages.length - 1]?.date != data.date) {
-                setMessages((x) => [...x, data])
+                console.log("from effect")
+                if(data.sender == id)
+                {
+                    setMessages((x) => [...x, data])
+                }
+              
             }
 
+           
+
+            markMessagesAsSeen(data.receiver)
+
+            if(data.sender!==id)
+            {
+
+                let response = await axiosInstance.get('chatlist')
+                const temp = response.data.list.map((x)=>{
+                    if(x.id==data.sender)
+                    {
+                        x.newMessage = true
+                    }
+                    return x
+                })
+                temp.sort((a, b) => (b.newMessage ? 1 : -1));
+                console.log("temppppp")
+                console.log(data);
+                console.log(response.data.list)
+                setChatList(temp)
+                goto(`/direct/${id}`)
+            }
+
+           
 
         })
+
+        socket.on('message_seen', async (data) => {
+
+            
+             let response1 = await axiosInstance.get(`getChat/${id}`)
+             setMessages(response1.data.content)
+        })
+
+        socket.on('typing', async (data) => { 
+            data.typing && data.room == uid && data.visible==id ?  setTyping(true)  : setTyping(false)
+         
+          
+
+        })
+
+     
+
+
 
 
 
     }, [socket])
 
+    
     useEffect(() => {
 
+        if(id!=0)
+        {
+            setShowList(false)
+        }
+
+      
 
         getData()
+        setTyping(false)
         socket.emit("join_room", id)
 
-
-
-
-    }, [])
-
-    useEffect(() => {
-
-
-        getData()
-        socket.emit("join_room", id)
-
-
+       
+       
 
 
     }, [id])
 
+  
 
-    useEffect(() => {
-        // if (id != 0) {
-        //     chatContainerRef?.current.scrollTop = chatContainerRef?.current?.scrollHeight;
-        // }
+    //typing
+    useEffect(()=>{
 
-    }, [messages]);
+        currentMessage.length !=0 ? socket.emit("typing",{room:id,typing:true,visible:myId}) : socket.emit("typing",{room:myId,typing:false,visible:id})
+
+    },[currentMessage])
 
 
     return (
@@ -161,57 +240,62 @@ function Inbox1() {
                 {showList && 
                 
                 <div className="w-full bg-black p-4 border-r">
-                <Link to={'/'} className='text-lg text-white  font-semibold mb-4'>
-                    <FontAwesomeIcon icon={faArrowLeft} style={{ color: "#ffffff", }} /> Back</Link>
+                    <Link to={'/'} className='text-lg text-white  font-semibold mb-4'>
+                        <FontAwesomeIcon icon={faArrowLeft} style={{ color: "#ffffff", }} /> Back</Link>
 
                     <h4 className='text-white mt-4 border-b w-fit'>Messages</h4>
 
-                {chatList.length != 0 ? 
+                    {chatList.length != 0 ?
 
 
-                    <ul className="space-y-2 mt-7 text-white ">
+                        <ul className="space-y-2 mt-7 text-white ">
 
-                        {chatList.map((x) => {
+                            {chatList?.map((x) => {
 
-                            return (
+                                return (
 
-                                <li key={x.id} onClick={() => { direct(x.id) }} className="flex items-center space-x-2 border-b border-gray-500 pb-3 cursor-pointer">
-                                    <img src={IMG_CDN + x.dp} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
-                                    <span className="text-sm font-medium">{x.username} </span>
-                                  
-                                </li>
-                            )
-                        })}
-                        {/* Add more user items here */}
+                                    <li key={x?.id} onClick={() => {
+                                        
+                                         direct(x?.id) 
+                                      
+                                         }} className="  border-b border-gray-500 pb-3 cursor-pointer">
+                                        <span className='flex items-center space-x-2'>
+                                        <img src={IMG_CDN + x?.dp} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
+                                        <span className="text-sm font-medium">{x?.username}</span> 
+                                        </span>
+                                       
+                                        {x?.newMessage ? <span className="text-sm font-bold flex-none ml-10">New Message</span> : <span className="text-sm font-semibold flex-none ml-10 text-gray-500">View Messages</span> }
+                                    </li>
+                                )
+                            })}
+                            {/* Add more user items here */}
 
 
 
-                    </ul>
-                    :
+                        </ul>
+                        :
 
-                    <div className='flex justify-center items-center h-full w-full'>
-                        <p className='flex justify-center items-center text-white'> Inbox's Empty</p>
-                    </div>
+                        <div className='flex justify-center items-center h-full w-full'>
+                            <p className='flex justify-center items-center text-white'> Inbox's Empty</p>
+                        </div>
+                    }
+
+                </div>
+
                 }
-
-            </div>
-
-                }
-              
+                
 
 
                 {/* Chat Area (Right Side) */}
-                {!showList ?
+                {!showList &&
                     <div className="flex flex-col w-full p-1"  >
                         {/* Header */}
                         <div className="bg-black p-4 flex items-center justify-start border-b">
-                        <span onClick={()=>{
-                            setShowList(true)
-                            goto(-1)
-                        }} className=' text-white  font-semibold mr-2'>
-                    <FontAwesomeIcon icon={faArrowLeft} style={{ color: "#ffffff", }} /> </span>
 
-                       
+                        <FontAwesomeIcon icon={faArrowLeft} style={{color: "#ffffff",}} className='mr-2' onClick={()=>{
+                            setShowList(true)
+                            goto('/direct/0')
+                        }} />
                             <img onClick={go} src={receiverDp && IMG_CDN + receiverDp} alt="User Avatar" className="w-8 h-8 rounded-full cursor-pointer object-cover" />
                             <span onClick={go} className="text-lg text-white font-semibold ml-2 cursor-pointer"> {receiverUsername && receiverUsername} </span>
 
@@ -232,32 +316,43 @@ function Inbox1() {
                             <div className="bg-black p-4 h-96 rounded-lg overflow-y-scroll flex-grow" ref={chatContainerRef}>
                                 <div className="flex flex-col space-y-2">
 
-                                    {messages.length != 0 && messages.map((x) => {
+                                    {messages?.length != 0 && messages.map((x) => {
 
                                         return (
-                                            x.sender == id
+                                            x?.sender == id
                                                 ?
 
-                                                <div key={x._id} className="flex items-start space-x-2 flex-wrap">
+                                                <div key={x?.date} className="flex items-start space-x-2 flex-wrap">
                                                     <img src={IMG_CDN + receiverDp} alt="User Avatar" className="w-6 h-6 rounded-full object-cover" />
                                                     <span className="bg-black text-white px-2 py-1 rounded-lg inline-block" style={{ maxWidth: "80%", wordWrap: "break-word" }}>
-                                                        {x.content} <span className='text-white' style={{ fontSize: "8px" }}>{x.time}</span>
+                                                        {x?.content} <span className='text-white' style={{ fontSize: "8px" }}>{x?.time}</span>
                                                     </span>
                                                 </div>
 
                                                 :
 
-                                                <div key={x._id} className="flex items-start space-x-2 justify-end">
+                                                <div key={x?.date} className="flex items-start space-x-2 justify-end">
                                                     <span className="bg-black text-white px-2 py-1 rounded-lg inline-block" style={{ maxWidth: "80%", wordWrap: "break-word" }}>
-                                                        <span className='text-white' style={{ fontSize: "8px" }}>{x.time}</span>  {x.content}
+                                                        <span className='text-white' style={{ fontSize: "8px" }}>{x?.time}</span>  {x?.content}
                                                     </span>
+                                                    {x?.sender !== id && x?.seenByReceiver && (
+                                                        <span className="text-xs text-gray-400 mt-1">Seen</span>
+                                                    )}
                                                     {/* <img src={img} alt="User Avatar" className="w-6 h-6 rounded-full" /> */}
+
                                                 </div>
 
 
                                         )
                                     })}
 
+
+                                       <div  className="flex items-start space-x-2 flex-wrap" >
+                                       {typing && 
+                                       <TypingAnim/>      
+                                       }
+                                       </div>
+                                   
 
 
 
@@ -269,9 +364,9 @@ function Inbox1() {
                                 {/* Emoji Picker Button */}
                                 <button
                                     onClick={() => setShowEmojiPicker(!showEmojiPicker)} // Step 2: Toggle emoji picker visibility
-                                    className="bg-blue-500 text-white p-2 rounded-full"
+                                    className="bg-blue-500 text-white p-2 rounded-l-md "
                                 >
-                                  <FontAwesomeIcon icon={faFaceSmile} style={{color: "#ffffff",}} />
+                                    <FontAwesomeIcon icon={faFaceSmile} style={{ color: "#ffffff", }} />
                                 </button>
 
                                 {/* Emoji Picker */}
@@ -285,14 +380,14 @@ function Inbox1() {
                                         />
                                     </div>
                                 )}
-                                <input type="text"
+                                <input type="text" autoFocus
                                     onKeyDown={(e) => {
                                         if (e.key == "Enter" && e.target.value.length != 0) {
                                             sendMessage()
                                         }
 
                                     }}
-                                    value={currentMessage} onChange={(e) => setCurrentMessage(e.target.value)} placeholder="Type a message..." className="flex-grow border rounded-l-md px-3 py-2 bg-gray-800 text-white" />
+                                    value={currentMessage} onChange={(e) => setCurrentMessage(e.target.value)} placeholder="Type a message..." className="flex-grow border  px-3 py-2 bg-gray-800 text-white" />
                                 {currentMessage.length == 0
                                     ?
                                     <button className="bg-blue-400 text-white px-4 py-2 rounded-r-md">Send</button>
@@ -303,9 +398,8 @@ function Inbox1() {
                         </div>
                     </div>
 
-                    :
+                 
 
-null
                 }
 
             </div>

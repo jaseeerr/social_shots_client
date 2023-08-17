@@ -6,7 +6,8 @@ import MyAxiosInstance from '../../utils/axios';
 import { IMG_CDN, VIDEO_CDN } from '../../config/urls';
 import { Toaster, toast } from 'react-hot-toast';
 import jwt from "jsonwebtoken"
-
+import io from 'socket.io-client'
+const socket = io.connect('http://localhost:3000')
 
 const ViewPost = ({ images }) => {
     const axiosInstance = MyAxiosInstance();
@@ -215,6 +216,18 @@ const ViewPost = ({ images }) => {
 
       if(response.data.success)
       {
+
+        const data11 = {
+          pid:id,
+          from :myData._id,
+          to:data?.uid,
+          type:"like",
+          img:data?.type=="img" ? data?.picture : "https://cdn4.iconfinder.com/data/icons/ios-edge-glyph-12/25/Video-Play-512.png",
+  
+         }
+  
+         socket.emit("notification",data11)
+
         setLike(true)
         const data1 = data
         data1.likes.push(myData?._id)
@@ -235,6 +248,20 @@ const ViewPost = ({ images }) => {
         const data1 = data
         data1.likes.pop()
         setData(data1)
+
+
+
+        const data11 = {
+          pid:id,
+          from :myData._id,
+          to:data?.uid,
+          type:"like",
+          img:data?.type=="img" ? data?.picture : "https://cdn4.iconfinder.com/data/icons/ios-edge-glyph-12/25/Video-Play-512.png",
+  
+         }
+  
+         socket.emit("remove_notification",data11)
+        
       }
     })
 
@@ -493,6 +520,21 @@ onClick={()=>{
 
 
  })
+
+ const data11 = {
+  pid:id,
+  from :myData._id,
+  to:data?.uid,
+  type:"comment",
+  img:data?.type=="img" ? data?.picture : "https://cdn4.iconfinder.com/data/icons/ios-edge-glyph-12/25/Video-Play-512.png",
+
+ }
+
+ socket.emit("remove_notification",data11)
+
+
+
+
 }}
 
 > 
@@ -550,6 +592,7 @@ null}
       </div>
       <div className="flex items-center justify-between">
         <button 
+
         onClick={()=>{
 
           const data2 = {
@@ -567,6 +610,17 @@ null}
             
           
           })
+
+          const data11 = {
+            pid:id,
+            from :myData._id,
+            to:data?.uid,
+            type:"commeent",
+            img:data?.type=="img" ? data?.picture : "https://cdn4.iconfinder.com/data/icons/ios-edge-glyph-12/25/Video-Play-512.png",
+    
+           }
+    
+           socket.emit("notification",data11)
 
           document.getElementById('commentInput').value = ""
 
