@@ -22,7 +22,6 @@ function UserList() {
     const getData = async ()=>{
 
         let response = await axiosInstance.get('admin/allusers')
-        // console.log(response.data)
         setData(response.data)
         setFilteredData(response.data)
 

@@ -36,7 +36,7 @@ const CreatePhoto = () => {
 
    
     const file = event.target.files[0];
-    console.log(file);
+   
     if(!file?.type.startsWith('image/'))
     {
       toast.error("Invalid File")
@@ -52,7 +52,7 @@ const CreatePhoto = () => {
   
 
   const handleCropComplete = async (croppedArea, croppedAreaPixels) => {
-    console.log("000")
+ 
     try {
      
    
@@ -60,7 +60,7 @@ const CreatePhoto = () => {
      
 
       const croppedImage = await getCroppedImg(selectedImage, croppedAreaPixels);
-      console.log(croppedImage);
+  
       setCroppedImage(croppedImage);
 
     
@@ -78,7 +78,6 @@ const CreatePhoto = () => {
     // Handle image submit logic here
     if (croppedImage) {
       // Send croppedImage to the backend or perform any further actions
-      console.log('Cropped image:', croppedImage);
     }
   };
 

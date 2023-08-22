@@ -29,7 +29,6 @@ function ProfileBar() {
 
     const response = await  axiosInstance.get('myData')
     const res = await axiosInstance.get('suggested')
-    console.log(res.data)
     setSuggested(res.data)
     setUsername(response?.data?.username)
     setDp(response?.data?.dp)

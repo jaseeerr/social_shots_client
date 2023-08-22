@@ -4,11 +4,11 @@ import { faHome, faMessage, faMagnifyingGlass, faBolt, faCompass, faSquarePlus  
 import { useNavigate } from 'react-router';
 import logoImage from '../../../public/assets/LOGO1.png'; 
 import logoRec from '../../../public/assets/LOGO-REC1.png'; 
+import { IMG_CDN, SOCKET_URL } from '../../config/urls';
 import io from 'socket.io-client'
-const socket = io.connect('http://localhost:3000')
+const socket = io.connect(SOCKET_URL)
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { IMG_CDN } from '../../config/urls';
 import { setClickSearch } from '../../utils/commonSlice';
 import { useDispatch } from 'react-redux';
 import MyAxiosInstance from '../../utils/axios';
@@ -29,11 +29,12 @@ const [messageCount,setMessageCount] = useState(0)
   socket.emit('join_room',data)
 
 axiosInstance.get('myData').then((response)=>{
+  setUsername(response?.data?.username)
+  setDp(response?.data?.dp)
  axiosInstance.get("notifyCount").then((resp)=>{
 axiosInstance.get('messageCount').then((resp1)=>{
 
-  setUsername(response?.data?.username)
-  setDp(response?.data?.dp)
+
   setNotifyCount(resp.data)
   setMessageCount(resp1.data)
 
@@ -52,8 +53,6 @@ axiosInstance.get('messageCount').then((resp1)=>{
     //incoming notification
     socket.on("notify",(data)=>{
 
-      console.log("incomingg")
-      console.log(data)
       setNotifyCount(data)
 
     })
@@ -69,7 +68,6 @@ axiosInstance.get('messageCount').then((resp1)=>{
 
     socket.on("receive_message",async(data)=>{
 
-      console.log("incomg text")
 
       let response = await axiosInstance.get('messageCount')
       setMessageCount(response.data)
@@ -278,7 +276,7 @@ axiosInstance.get('messageCount').then((resp1)=>{
             </li>
 
             <li className="mb-4 p-2 hover:bg-gray-400 rounded-md">
-              <Link to="/notifications" className="text-white  flex items-center">
+              <Link to="/notifications"  className="text-white  flex items-center">
               <FontAwesomeIcon icon={faBolt} style={{color: "ffffff",}} className='mr-2' />
               
                 Notification {notifyCount>0 && <span className='ml-2 bg-red-600 rounded-full px-2'>{notifyCount}</span> }

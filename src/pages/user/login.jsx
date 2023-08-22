@@ -30,7 +30,6 @@ import { useDispatch } from "react-redux";
 
         const login  = await SignInWithGoogle()
 
-        console.log(login);
 
         if(login)
         {
@@ -119,7 +118,7 @@ import { useDispatch } from "react-redux";
               // Make the POST request
               axiosInstance.post('login',values).then((response)=>{
 
-                  console.log(response)
+             
                  
                   setLoader(false)
                   if(response.data.success)

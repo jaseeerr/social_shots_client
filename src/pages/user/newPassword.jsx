@@ -75,7 +75,6 @@ const formik = useFormik({
 
             setBload(false)
 
-            console.log(response)
             if(response.data.success)
             {
                toast.success("Your Password Have Been Changed. Please Login")

@@ -15,7 +15,6 @@ function FindAccount() {
 
     const sent = () => {
 
-        console.log(email)
 
         if(email==undefined)
         {
@@ -30,7 +29,6 @@ function FindAccount() {
 
         axios.post(`${BASE_URL}forgotPassword`, data).then((response) => {
 
-            console.log(response)
             if (response.data.success) {
               
                 toast.success("Link successfully sent.")

@@ -5,7 +5,6 @@ import { faTrash,faEye } from '@fortawesome/free-solid-svg-icons';
 import MyAxiosInstance from '../../utils/axios';
 function PostCard(data) {
 const axiosInstance = MyAxiosInstance(1)
-    console.log(data)
 
     const { data: {
         

@@ -75,12 +75,7 @@ const AdminLayout = ()=>{
        
      
         <AdminNavbar/>
-              
-              <Outlet />
-
-      
-               
-                  
+              <Outlet />       
         </Provider>
         </>
     )
@@ -100,7 +95,7 @@ const AppRouter = createBrowserRouter([
 
             },
             {
-                path:"/stories",
+                path:"/stories/:id",
                 element: <StoryModal images={images} />
             },
             {

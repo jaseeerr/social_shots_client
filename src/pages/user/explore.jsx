@@ -24,7 +24,6 @@ const Explore = () => {
     searchInputRef.current.focus();
 
     axiosInstance.get('allPosts').then((response) => {
-      console.log(response);
       setPosts(response.data);
     });
   }, []);

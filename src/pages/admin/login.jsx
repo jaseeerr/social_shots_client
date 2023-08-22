@@ -68,7 +68,6 @@
               // Make the POST request
               axiosInstance.post('admin/login',values).then((response)=>{
 
-                  console.log(response)
                   setLoader(false)
                   if(response.data.success)
                   {

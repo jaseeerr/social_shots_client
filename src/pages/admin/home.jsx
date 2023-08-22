@@ -21,7 +21,6 @@ const [videoCount,setVideoCount] = useState(0)
 const getData = async ()=>{
 
     let response = await axiosInstance.get('admin/dashboardData')
-    console.log(response)
     setUserCount(response.data.userCount)
     setUserChart(response.data.userChart)
     setPhotoCount(response.data.photoCount)

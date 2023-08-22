@@ -38,7 +38,7 @@ const formik = useFormik({
    
     },
   validate: (values) => {
-    console.log(values)
+  
     values.name = values.name.trim().toLowerCase()
     values.email = values.email.trim()
     // values.phone = values.phone.trim()
@@ -54,7 +54,7 @@ const formik = useFormik({
     axiosInstance.get(`checkusername/${values?.name}`).then((response)=>{
 
                           
-     console.log(response)
+   
       if(!response.data.badname)
       {
         // setUsername(e.target.value.trim())
@@ -119,8 +119,7 @@ const formik = useFormik({
              axiosInstance.post('signup',values).then((response)=>{
 
               setLoader(false)
-                console.log(response)
-
+              
                 if(response.data.success)
                 {
                   const x = true

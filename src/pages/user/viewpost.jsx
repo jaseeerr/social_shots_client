@@ -3,11 +3,11 @@ import { Link, useNavigate,useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faHeart, faXmark,faEllipsis, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import MyAxiosInstance from '../../utils/axios';
-import { IMG_CDN, VIDEO_CDN } from '../../config/urls';
+import { IMG_CDN, SOCKET_URL, VIDEO_CDN } from '../../config/urls';
 import { Toaster, toast } from 'react-hot-toast';
 import jwt from "jsonwebtoken"
 import io from 'socket.io-client'
-const socket = io.connect('http://localhost:3000')
+const socket = io.connect(SOCKET_URL)
 
 const ViewPost = ({ images }) => {
     const axiosInstance = MyAxiosInstance();
@@ -55,7 +55,7 @@ const ViewPost = ({ images }) => {
    if(dat)
    {
     dat1 = dat
-    console.log("aa");
+
     uids = dat.map((x)=>{
       return x.uid
     })
@@ -63,7 +63,7 @@ const ViewPost = ({ images }) => {
    else
    {
     dat1 = commentList
-    console.log("bb");
+
      uids = commentList.map((x)=>{
       return x.uid
     })
@@ -175,8 +175,7 @@ const ViewPost = ({ images }) => {
       }).then(()=>{
 
         
-        console.log("888888");
-        console.log(data)
+  
         setLoader(true)
 
 
@@ -516,7 +515,7 @@ onClick={()=>{
 
    getShortlist1(response.data.data3.reverse())
 
-   console.log(response);
+  
 
 
  })
@@ -602,10 +601,10 @@ null}
           }
           axiosInstance.post(`comment`,data2).then((response)=>{
 
-            console.log(response)
+      
             const dat = response.data.data.comments.reverse()
             // setCommentList(dat)
-           console.log(dat);
+        
             getShortlist1(dat)
             
           

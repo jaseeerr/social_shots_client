@@ -5,9 +5,9 @@ import { faComment,faHeart,faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import jwt from "jsonwebtoken"
 import MyAxiosInstance from '../../utils/axios';
 import { Toaster, toast } from 'react-hot-toast';
+import { IMG_CDN, SOCKET_URL } from '../../config/urls';
 import io from 'socket.io-client'
-const socket = io.connect('http://localhost:3000')
-import { IMG_CDN } from '../../config/urls';
+const socket = io.connect(SOCKET_URL)
 
 const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments, type, video }) => {
 
@@ -41,7 +41,6 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments,
 
     axiosInstance.post('shortlist',likes).then((response)=>{
 
-      console.log(response)
 
 
       setLikelist(response.data)
@@ -63,7 +62,6 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments,
       if(dat)
       {
        dat1 = dat
-       console.log("aa");
        uids = dat.map((x)=>{
          return x.uid
        })
@@ -71,7 +69,6 @@ const PostCard = ({ username, image, likes, caption, dp, date, id,uid, comments,
       else
       {
        dat1 = commentList
-       console.log("bb");
         uids = commentList.map((x)=>{
          return x.uid
        })
@@ -455,7 +452,6 @@ onClick={()=>{
 
    getShortlist1(response.data.data3)
 
-   console.log(response);
 
 
  })
@@ -526,7 +522,6 @@ null}
 
           if(newComment==null)
           {
-            console.log("nuuul");
             return
           }
 
@@ -537,10 +532,8 @@ null}
           }
           axiosInstance.post(`comment`,data2).then((response)=>{
 
-            console.log(response)
             const dat = response.data.data.comments.reverse()
             // setCommentList(dat)
-           console.log(dat);
             getShortlist1(dat)
             
           

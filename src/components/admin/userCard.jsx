@@ -7,7 +7,6 @@ function UserCard(data) {
   const axiosInstance = MyAxiosInstance(1)
  const goto = useNavigate()
 
-console.log(data)
  
   // const {id, username, dp, following, followers, postCount, accountStatus, reports} = data?.data
   const { data: {
@@ -32,7 +31,6 @@ console.log(data)
       setBlock1(!block1)
     }
      goto('/admin/userlist')
-    console.log(response)
 
   }
 

@@ -25,7 +25,6 @@ function AdminNavbar() {
  const goto = useNavigate()
 
   const logout = ()=>{
-   console.log("cliii");
    localStorage.removeItem('adminToken')
    toast.success("Logout")
    setTimeout(()=>{

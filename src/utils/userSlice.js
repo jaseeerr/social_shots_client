@@ -19,7 +19,7 @@ const userSlice = createSlice({
             state.login = action.payload
         },
         updateUserdata:(state,action)=>{
-            console.log(action.payload)
+        
             state.userdata = action.payload
         },
         

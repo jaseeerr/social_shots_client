@@ -4,13 +4,13 @@ import MyAxiosInstance from '../../utils/axios';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router';
 import { Toaster, toast } from 'react-hot-toast';
-import { IMG_CDN, VIDEO_CDN } from '../../config/urls';
+import { IMG_CDN, VIDEO_CDN,SOCKET_URL } from '../../config/urls';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
-
-
+import io from 'socket.io-client'
+const socket = io.connect(SOCKET_URL)
 
 function MyProfile() {
 
@@ -30,7 +30,7 @@ function MyProfile() {
   const [pass, setPass] = useState(false)
   const [posts, setPosts] = useState([])
   const [own, setOwn] = useState()
-
+  const [Fid,setFid] = useState()
   const [otpSend, setOtpSend] = useState(false)
   const [verifyBtn, setVerifyBtn] = useState(false)
 
@@ -68,12 +68,15 @@ function MyProfile() {
 
       const mydata = await axiosInstance.get('myData')
       setMyData(mydata)
+    
 
 
       axiosInstance.get(`profile/${id}`).then((dataResponse) => {
         
         const data = dataResponse.data;
-        console.log(data)
+      
+        setFid(data?.data1?._id);
+       
       //  if(data.data1 == {})
       if (Object.keys(data?.data1).length === 0 && data.data1.constructor === Object)
        {
@@ -125,6 +128,7 @@ function MyProfile() {
           setOwn(data.own);
           setUserdata(data.data1);
           setUsername(data?.data?.data1?.username);
+         
           setEmail(data?.data?.data1?.email);
           setPhone(data?.data?.data1?.phone);
           setBio(data?.data?.data1?.bio);
@@ -158,7 +162,20 @@ function MyProfile() {
 
     if (response.data.success) {
       userdata.followers.push(response.data.data)
+
       setFollowingBtn(true)
+      const data = {
+        pid:null,
+        from :myData?.data?._id,
+        to:Fid,
+        type:"follow",
+        img:this.type=="img" ? image : "https://cdn4.iconfinder.com/data/icons/ios-edge-glyph-12/25/Video-Play-512.png",
+
+       }
+
+       socket.emit("notification",data)
+
+
     }
     else if (response.data.requested) {
       setRequestedBtn(true)

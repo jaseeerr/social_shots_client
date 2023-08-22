@@ -1,15 +1,16 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import io from 'socket.io-client'
-const socket = io.connect('http://localhost:3000')
+
 import MyAxiosInstance from '../../utils/axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFaceSmile } from '@fortawesome/free-solid-svg-icons';
-import { IMG_CDN } from '../../config/urls';
+import { IMG_CDN, SOCKET_URL } from '../../config/urls';
 import Picker from '@emoji-mart/react'
 import TypingAnim from './typingAnim';
 import { useSelector } from 'react-redux';
+import io from 'socket.io-client'
+const socket = io.connect(SOCKET_URL)
 
 function Inbox1() {
     
@@ -78,7 +79,7 @@ function Inbox1() {
 
         await socket.emit('send_message', messageDate)
         if (messages[messages.length - 1]?.date != messageDate.date && messageDate.receiver==id) {
-            console.log("from send message")
+          
             setMessages((x) => [...x, messageDate])
         }
 
@@ -87,7 +88,7 @@ function Inbox1() {
 
     const getData = async () => {
         let response = await axiosInstance.get('chatlist')
-        console.log(response)
+       
         response.data.list.forEach(element => {
             if(element.id==id)
             {
@@ -143,10 +144,9 @@ function Inbox1() {
     useEffect(() => {
         socket.on("receive_message", async (data) => {
 
-           console.log(data)
+        
 
             if (messages[messages.length - 1]?.date != data.date) {
-                console.log("from effect")
                 if(data.sender == id)
                 {
                     setMessages((x) => [...x, data])
@@ -170,9 +170,7 @@ function Inbox1() {
                     return x
                 })
                 temp.sort((a, b) => (b.newMessage ? 1 : -1));
-                console.log("temppppp")
-                console.log(data);
-                console.log(response.data.list)
+               
                 setChatList(temp)
                 goto(`/direct/${id}`)
             }
