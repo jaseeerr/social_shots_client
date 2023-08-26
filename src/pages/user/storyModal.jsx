@@ -3,8 +3,11 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import Stories from "react-insta-stories"
 import MyAxiosInstance from '../../utils/axios';
 import { IMG_CDN } from '../../config/urls';
+import { useSelector } from 'react-redux';
 const StoryModal = () => {
   //  states and variables
+  const userdata = useSelector(store=>store.userInfo.userdata)
+  
   const axiosInstance = MyAxiosInstance()
   const images = [
     "https://res.cloudinary.com/dfhcxw70v/image/upload/v1692440820/img1692440819252_ttzzwi.jpg",
@@ -20,23 +23,45 @@ const StoryModal = () => {
 
   ])
   const [allStories, setAllStories] = useState([])
+  const [navList,setNavList] = useState([])
 
   // functions
   const getData = async () => {
 
     const response = await axiosInstance.get("getstories")
-   
+    console.log(response.data)
+    let temp2 = response.data.map((x)=>x.username)
+    temp2 = removeDuplicates(temp2)
+    setNavList(temp2)
+    console.log(temp2)
     setAllStories(response.data)
-
     const temp = response.data.filter((x) => x.username == id )
     setUsername(temp[0].username)
     setDp(temp[0].dp)
     const temp1 = temp.map((x)=>IMG_CDN+x.picture)
-    console.log(temp1);
     setStories1(temp1)
-    console.log(stories1);
+   
   }
 
+
+  function removeDuplicates(arr) {
+  return [...new Set(arr)];
+}
+
+const run12 = () => {
+  console.log(navList.indexOf(id))
+  console.log(navList.length)
+  if(navList.indexOf(id) == navList.length-1)
+  {
+    goto('/')
+  }
+  else
+  {
+    // location.href = `/stories/${navList[navList.indexOf(id)+1]}`
+    // goto(`/stories/${navList[navList.indexOf(id)+1]}`)
+  }
+  //  goto('/')
+}
 
 
   // useEffects
@@ -49,15 +74,13 @@ const StoryModal = () => {
       getData()
     }
 
-  }, [])
+  }, [id])
 
   const goto = useNavigate()
   const goProfile = () => {
     goto('/profile')
   }
-  const run12 = () => {
-     goto('/')
-  }
+
 
   return (
     <>
@@ -74,7 +97,7 @@ const StoryModal = () => {
 
           {/* User Info */}
           <div className="flex justify-center items-center mb-4 ">
-            <img onClick={goProfile} src={stories1.length > 0 ? IMG_CDN+dp : "https://res.cloudinary.com/dfhcxw70v/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1691309508/dpmumthas_ihm3jr.jpg"} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
+            <img onClick={goProfile} src={stories1.length > 0 ? IMG_CDN+dp : "https://res.cloudinary.com/dfhcxw70v/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1691309508/dpmumthas_ihm3jr.jpg"} alt="Profile" className="w-8 h-8 rounded-full mr-2 object-cover" />
             <span onClick={goProfile} className="text-white">{stories1.length > 0 && username}</span>
           </div>
 

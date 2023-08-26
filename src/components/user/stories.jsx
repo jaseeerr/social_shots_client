@@ -12,14 +12,23 @@ function Stories() {
   // states
   const axiosInstance = MyAxiosInstance()
   const [stories,setStories] = useState([])
-
+  const [dead,setDead] = useState([])
 
 // functions
   const getData = async()=>{
    
     const response = await axiosInstance.get("getstories")
+    const now = Date.now()
+    const temp = response.data.filter((x)=>Date.parse(x.expire) < now)
+    console.log(temp)
+    console.log("dd");
+    console.log(response.data[0])
+    console.log(Date.parse(response.data[0].expire))
+    console.log(now)
     console.log(response)
-    setStories(response.data)
+    const uniqueArray = removeDuplicates(response.data, item => item.uid);
+
+    setStories(uniqueArray)
     
   }
 
@@ -38,6 +47,18 @@ function Stories() {
     }
 
     return randomWord;
+}
+
+function removeDuplicates(array, key) {
+  const seen = new Set();
+  return array.filter(item => {
+      const itemKey = key(item);
+      if (!seen.has(itemKey)) {
+          seen.add(itemKey);
+          return true;
+      }
+      return false;
+  });
 }
 
 

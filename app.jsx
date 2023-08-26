@@ -25,6 +25,9 @@ import UserList from "./src/pages/admin/userList";
 import PostList from "./src/pages/admin/postList";
 import Chat from "./src/pages/user/Chat";
 import Notifications from "./src/pages/user/notifications";
+import Call from "./src/pages/user/Call";
+import IncomingCall from "./src/components/user/incomingCall";
+import OutGoingCall from "./src/components/user/outgoingCall";
 import Err from "./src/pages/user/error";
 const images = []
 const images1 = [
@@ -134,6 +137,18 @@ const AppRouter = createBrowserRouter([
             {
                 path:"/notifications",
                 element: <Notifications />
+            },
+            {
+                path:"/call/:id",
+                element: <Call />
+            },
+            {
+                path:"/incomingCall",
+                element: <IncomingCall />
+            },
+            {
+                path:"/outgoingCall",
+                element: <OutGoingCall />
             },
             
         ]

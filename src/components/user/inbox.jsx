@@ -6,7 +6,7 @@ import io from 'socket.io-client'
 const socket = io.connect(SOCKET_URL)
 import MyAxiosInstance from '../../utils/axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faFaceSmile } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faFaceSmile,faPhone,faVideo } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react'
 import TypingAnim from './typingAnim';
 import { useSelector } from 'react-redux';
@@ -27,39 +27,48 @@ function Inbox() {
     const [myId, setMyId] = useState()
     const chatContainerRef = useRef(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [typing,setTyping] = useState(false)
-    const userdata = useSelector(store =>store.userInfo.userdata)
-
+    const [typing, setTyping] = useState(false)
+    const userdata = useSelector(store => store.userInfo.userdata)
 
     //functions
+    // Call
+    
+    const call1 = async ()=>{
+        openNewWindow("http://localhost:1234/outgoingCall")
+        await socket.emit("incomingCall",id)
+
+       
+    }
+    
+    // new Window
+    const openNewWindow = (id) => {
+        const width = 800;  // Set the desired width
+        const height = 600; // Set the desired height
+        const url = id
+    
+        const windowFeatures = `width=${width},height=${height},resizable=yes,scrollbars=yes`;
+        window.open(url, '_blank', windowFeatures);
+      };
+
 
     //mark seen
-
     const markMessagesAsSeen = async (receiver) => {
         try {
-
-
-
             await axiosInstance.post('mark-messages-as-seen', {
                 sender1: id,
                 receiver1: userdata._id
             })
-
             if (receiver && id && id != 0) {
                 socket.emit('message_seen', { sender: id, receiver: receiver })
             }
-
-
         } catch (error) {
             console.error('Failed to mark messages as seen:', error);
         }
     }
 
-
     //send message
 
     const sendMessage = async () => {
-
 
         const now = new Date();
         let time = now.getHours() + ":" + now.getMinutes()
@@ -75,7 +84,7 @@ function Inbox() {
         }
 
         await socket.emit('send_message', messageDate)
-        if (messages[messages.length - 1]?.date != messageDate.date && messageDate.receiver==id) {
+        if (messages[messages.length - 1]?.date != messageDate.date && messageDate.receiver == id) {
             setMessages((x) => [...x, messageDate])
         }
 
@@ -85,8 +94,7 @@ function Inbox() {
     const getData = async () => {
         let response = await axiosInstance.get('chatlist')
         response.data.list.forEach(element => {
-            if(element.id==id)
-            {
+            if (element.id == id) {
                 element.newMessage = false
             }
         });
@@ -99,7 +107,7 @@ function Inbox() {
         if (id != 0) {
             let response1 = await axiosInstance.get(`getChat/${id}`)
             temp = response1.data.receiverId
-            
+
             setReceiverDp(response1.data.receiverDp)
             setReceiverUsername(response1.data.receiverName)
             setMessages(response1.data.content)
@@ -118,98 +126,68 @@ function Inbox() {
 
     }
 
-
-
     const go = () => {
         goto(`/${receiverUsername}`)
     }
     const direct = (id) => {
         // goto(`/direct/${id}`)
-        location.href =`/direct/${id}`
+        location.href = `/direct/${id}`
     }
-
-
-
-
     //use effects
-
-
-
     //socket
     useEffect(() => {
         socket.on("receive_message", async (data) => {
 
-          
-
             if (messages[messages.length - 1]?.date != data.date) {
-               
-                if(data.sender == id)
-                {
+                if (data.sender == id) {
                     setMessages((x) => [...x, data])
                 }
-              
             }
-
-           
 
             markMessagesAsSeen(data.receiver)
 
-            if(data.sender!==id)
-            {
+            if (data.sender !== id) {
 
                 let response = await axiosInstance.get('chatlist')
-                const temp = response.data.list.map((x)=>{
-                    if(x.id==data.sender)
-                    {
+                const temp = response.data.list.map((x) => {
+                    if (x.id == data.sender) {
                         x.newMessage = true
                     }
                     return x
                 })
                 temp.sort((a, b) => (b.newMessage ? 1 : -1));
-              
-               
+
                 setChatList(temp)
                 goto(`/direct/${id}`)
             }
-
-           
 
         })
 
         socket.on('message_seen', async (data) => {
 
+            let response1 = await axiosInstance.get(`getChat/${id}`)
+            setMessages(response1.data.content)
+        })
+
+        socket.on('typing', async (data) => {
+            data.typing && data.room == uid && data.visible == id ? setTyping(true) : setTyping(false)
+
+        })
+
+        socket.on('incomingCall1', ()=>{
             
-             let response1 = await axiosInstance.get(`getChat/${id}`)
-             setMessages(response1.data.content)
+            openNewWindow("http://localhost:1234/incomingCall")
+    
         })
-
-        socket.on('typing', async (data) => { 
-            data.typing && data.room == uid && data.visible==id ?  setTyping(true)  : setTyping(false)
-         
-          
-
-        })
-
-     
-
-
-
-
 
     }, [socket])
 
-    
-    useEffect(() => {
 
-      
+    useEffect(() => {
 
         getData()
         setTyping(false)
         socket.emit("join_room", id)
-
-       
-       
-
 
     }, [id])
 
@@ -223,11 +201,11 @@ function Inbox() {
     }, [messages]);
 
     //typing
-    useEffect(()=>{
+    useEffect(() => {
 
-        currentMessage.length !=0 ? socket.emit("typing",{room:id,typing:true,visible:myId}) : socket.emit("typing",{room:myId,typing:false,visible:id})
+        currentMessage.length != 0 ? socket.emit("typing", { room: id, typing: true, visible: myId }) : socket.emit("typing", { room: myId, typing: false, visible: id })
 
-    },[currentMessage])
+    }, [currentMessage])
 
 
     return (
@@ -250,16 +228,16 @@ function Inbox() {
                                 return (
 
                                     <li key={x?.id} onClick={() => {
-                                        
-                                         direct(x?.id) 
-                                      
-                                         }} className="  border-b border-gray-500 pb-3 cursor-pointer">
+
+                                        direct(x?.id)
+
+                                    }} className="  border-b border-gray-500 pb-3 cursor-pointer">
                                         <span className='flex items-center space-x-2'>
-                                        <img src={IMG_CDN + x?.dp} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
-                                        <span className="text-sm font-medium">{x?.username}</span> 
+                                            <img src={IMG_CDN + x?.dp} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
+                                            <span className="text-sm font-medium">{x?.username}</span>
                                         </span>
-                                       
-                                        {x?.newMessage ? <span className="text-sm font-bold flex-none ml-10">New Message</span> : <span className="text-sm font-semibold flex-none ml-10 text-gray-500">View Messages</span> }
+
+                                        {x?.newMessage ? <span className="text-sm font-bold flex-none ml-10">New Message</span> : <span className="text-sm font-semibold flex-none ml-10 text-gray-500">View Messages</span>}
                                     </li>
                                 )
                             })}
@@ -282,11 +260,20 @@ function Inbox() {
                 {id != 0 ?
                     <div className="flex flex-col w-3/4 p-1"  >
                         {/* Header */}
-                        <div className="bg-black p-4 flex items-center justify-start border-b">
-
+                        <div className="bg-black p-4 flex items-center justify-between border-b">
+                            <div className='flex'>
                             <img onClick={go} src={receiverDp && IMG_CDN + receiverDp} alt="User Avatar" className="w-8 h-8 rounded-full cursor-pointer object-cover" />
                             <span onClick={go} className="text-lg text-white font-semibold ml-2 cursor-pointer"> {receiverUsername && receiverUsername} </span>
-
+                            </div>
+                            <div className='flex'>
+                                <span onClick={call1}>
+                                <FontAwesomeIcon icon={faPhone} style={{color: "#ffffff",}} className='mr-6'  />
+                                </span>
+                                <span>
+                                <FontAwesomeIcon icon={faVideo} style={{color: "#ffffff",}} />
+                                </span>
+                            </div>
+                           
 
 
                             {/* <div className="flex items-center space-x-2">
@@ -335,12 +322,12 @@ function Inbox() {
                                     })}
 
 
-                                       <div  className="flex items-start space-x-2 flex-wrap" >
-                                       {typing && 
-                                       <TypingAnim/>      
-                                       }
-                                       </div>
-                                   
+                                    <div className="flex items-start space-x-2 flex-wrap" >
+                                        {typing &&
+                                            <TypingAnim />
+                                        }
+                                    </div>
+
 
 
 
