@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx parcel index.html",
-    "start1": "sudo npx parcel index.html",
+    "start": "sudo npx parcel index.html",
+  
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
