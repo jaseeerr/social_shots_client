@@ -25,7 +25,7 @@ import UserList from "./src/pages/admin/userList";
 import PostList from "./src/pages/admin/postList";
 import Chat from "./src/pages/user/Chat";
 import Notifications from "./src/pages/user/notifications";
-import Call from "./src/pages/user/Call";
+import Call from "./src/pages/user/call";
 import IncomingCall from "./src/components/user/incomingCall";
 import OutGoingCall from "./src/components/user/outgoingCall";
 import Err from "./src/pages/user/error";
