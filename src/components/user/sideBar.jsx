@@ -138,14 +138,11 @@ axiosInstance.get('messageCount').then((resp1)=>{
     </div>
     <div>
     <ul className="flex justify-evenly py-2">
-    <li className="mb-4 p-2 " onClick={()=>{
-      clickSearch()
-      goto('/explore')
-    }}>
-              <a href="" className="text-white hover:text-gray-300 flex items-center">
+    <li className="mb-4 p-2 " >
+              <Link to="/explore" className="text-white hover:text-gray-300 flex items-center">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="mr-2" />
                 
-              </a>
+              </Link>
             </li>
 
             <li className="mb-4 p-2 ">
@@ -180,18 +177,18 @@ axiosInstance.get('messageCount').then((resp1)=>{
     <nav className="fixed bottom-0 left-0 w-full h-14 bg-black text-white  md:block lg:hidden sm:block ">
     <ul className="flex justify-evenly py-2">
     <li className="mb-4 p-2 ">
-              <a href="" onClick={goHome} className="text-white hover:text-gray-300 flex items-center">
+              <Link to="/" onClick={goHome} className="text-white hover:text-gray-300 flex items-center">
                 <FontAwesomeIcon icon={faHome} className="mr-2" />
                 
-              </a>
+              </Link>
             </li>
 
             <li className="mb-4 p-2" onClick={()=>goto('/explore')}>
-              <a href="" className="text-white hover:text-gray-300 flex items-center">
+              <Link to="/explore" className="text-white hover:text-gray-300 flex items-center">
               <FontAwesomeIcon icon={faCompass} style={{color: "ffffff",}} className='mr-2' />
               
                  
-              </a>
+              </Link>
             </li>
 
             <li className="mb-4 p-2" onClick={()=>setShowModal(true)}>
