@@ -6,7 +6,7 @@ import io from 'socket.io-client'
 const socket = io.connect(SOCKET_URL)
 import MyAxiosInstance from '../../utils/axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faFaceSmile,faPhone,faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faFaceSmile, faPhone, faVideo } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react'
 import TypingAnim from './typingAnim';
 import { useSelector } from 'react-redux';
@@ -17,6 +17,8 @@ function Inbox() {
     let uid
     const goto = useNavigate()
 
+    const [loadLeft, setLoadLeft] = useState(true)
+    const [loadRight, setloadRight] = useState(true)
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState("")
     const [chatList, setChatList] = useState([])
@@ -32,23 +34,46 @@ function Inbox() {
 
     //functions
     // Call
-    
-    const call1 = async ()=>{
-        openNewWindow("http://localhost:1234/outgoingCall")
-        await socket.emit("incomingCall",id)
 
+    const call1 = async () => {
+        
+
+        localStorage.setItem('callto',receiverUsername)
+        localStorage.setItem('calltodp',receiverDp)
+        localStorage.setItem('calltoid',receiverId)
+        const mobileQuery = window.matchMedia('(max-width: 767px)');
+        const tabletQuery = window.matchMedia('(min-width: 768px) and (max-width: 1023px)');
+
+        // Function to determine the device type
+        
        
+            if (mobileQuery.matches) {
+                goto(`/outgoingCall`)
+            } else if (tabletQuery.matches) {
+                goto(`/outgoingCall`)
+            } else {
+                // openNewWindow(`http://localhost:1234/outgoingCall/${id}`)
+                openNewWindow(`https://socialshots.site/outgoingCall/${id}`)
+                
+            }
+       
+         
+            //   await  socket.emit("incomingCall", {id,callfrom:userdata.username,callfromdp:userdata.dp,callfromid:userdata._id})
+        
+         
+
+
     }
-    
+
     // new Window
     const openNewWindow = (id) => {
         const width = 800;  // Set the desired width
         const height = 600; // Set the desired height
         const url = id
-    
+
         const windowFeatures = `width=${width},height=${height},resizable=yes,scrollbars=yes`;
         window.open(url, '_blank', windowFeatures);
-      };
+    };
 
 
     //mark seen
@@ -102,7 +127,7 @@ function Inbox() {
         setChatList(response.data.list)
         setMyId(response.data.myId)
         uid = response.data.myId
-
+        setLoadLeft(false)
         let temp
         if (id != 0) {
             let response1 = await axiosInstance.get(`getChat/${id}`)
@@ -113,6 +138,7 @@ function Inbox() {
             setMessages(response1.data.content)
             setSenderId(response1.data.senderId)
             setReceiverId(response1.data.receiverId)
+            setloadRight(false)
 
         }
 
@@ -174,11 +200,29 @@ function Inbox() {
 
         })
 
-        socket.on('incomingCall1', ()=>{
+        // socket.on('incomingCall1', (data) => {
+
+        //     console.log("INCOMING CALL")
+        //     localStorage.setItem('callfrom',data.callfrom);
+        //     localStorage.setItem('callfromdp',data.callfromdp)
+        //     localStorage.setItem('callfromid',data.callfromid)
+
+            // const mobileQuery = window.matchMedia('(max-width: 767px)');
+            // const tabletQuery = window.matchMedia('(min-width: 768px) and (max-width: 1023px)');
+
+           
+            //     if (mobileQuery.matches) {
+            //         goto(`/incomingCall`)
+            //     } else if (tabletQuery.matches) {
+            //         goto(`/incomingCall`)
+            //     } else {
+            //         openNewWindow("http://localhost:1234/incomingCall")
+            //     }
+
             
-            openNewWindow("http://localhost:1234/incomingCall")
-    
-        })
+           
+
+        // })
 
     }, [socket])
 
@@ -194,7 +238,7 @@ function Inbox() {
     // message
     useEffect(() => {
 
-        if (id != 0) {
+        if (id != 0 && !loadRight) {
             chatContainerRef?.current.scrollTop = chatContainerRef?.current?.scrollHeight;
         }
 
@@ -218,7 +262,9 @@ function Inbox() {
 
                     <h4 className='text-white mt-4 border-b w-fit'>Messages</h4>
 
-                    {chatList.length != 0 ?
+
+
+                    {chatList.length != 0 && !loadLeft ?
 
 
                         <ul className="space-y-2 mt-7 text-white ">
@@ -247,33 +293,46 @@ function Inbox() {
 
                         </ul>
                         :
+                        chatList.length == 0 && !loadLeft ?
 
-                        <div className='flex justify-center items-center h-full w-full'>
-                            <p className='flex justify-center items-center text-white'> Inbox's Empty</p>
-                        </div>
+                            <div className='flex justify-center items-center h-full w-full'>
+                                <p className='flex justify-center items-center text-white'> Inbox's Empty</p>
+                            </div>
+                            :
+                            <div className='flex justify-center mt-96 w-full h-screen'>
+                                <div class="text-center">
+                                    <div role="status">
+                                        <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                                        </svg>
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
                     }
 
                 </div>
 
 
                 {/* Chat Area (Right Side) */}
-                {id != 0 ?
+                {id != 0 && !loadRight ?
                     <div className="flex flex-col w-3/4 p-1"  >
                         {/* Header */}
                         <div className="bg-black p-4 flex items-center justify-between border-b">
                             <div className='flex'>
-                            <img onClick={go} src={receiverDp && IMG_CDN + receiverDp} alt="User Avatar" className="w-8 h-8 rounded-full cursor-pointer object-cover" />
-                            <span onClick={go} className="text-lg text-white font-semibold ml-2 cursor-pointer"> {receiverUsername && receiverUsername} </span>
+                                <img onClick={go} src={receiverDp && IMG_CDN + receiverDp} alt="User Avatar" className="w-8 h-8 rounded-full cursor-pointer object-cover" />
+                                <span onClick={go} className="text-lg text-white font-semibold ml-2 cursor-pointer"> {receiverUsername && receiverUsername} </span>
                             </div>
                             <div className='flex'>
                                 <span onClick={call1}>
-                                <FontAwesomeIcon icon={faPhone} style={{color: "#ffffff",}} className='mr-6'  />
+                                    <FontAwesomeIcon icon={faPhone} style={{ color: "#ffffff", }} className='mr-6' />
                                 </span>
                                 <span>
-                                <FontAwesomeIcon icon={faVideo} style={{color: "#ffffff",}} />
+                                    <FontAwesomeIcon icon={faVideo} style={{ color: "#ffffff", }} />
                                 </span>
                             </div>
-                           
+
 
 
                             {/* <div className="flex items-center space-x-2">
@@ -374,13 +433,28 @@ function Inbox() {
                     </div>
 
                     :
-
+ 
+                    id==0 ?
 
                     <div className="flex justify-center items-center w-3/4 p-1 bg-black">
                         {/* Header */}
                         <svg aria-label="" className="_ab6-" color="rgb(245, 245, 245)" fill="rgb(245, 245, 245)" height="96" role="img" viewBox="0 0 96 96" width="96"><path d="M48 0C21.532 0 0 21.533 0 48s21.532 48 48 48 48-21.532 48-48S74.468 0 48 0Zm0 94C22.636 94 2 73.364 2 48S22.636 2 48 2s46 20.636 46 46-20.636 46-46 46Zm12.227-53.284-7.257 5.507c-.49.37-1.166.375-1.661.005l-5.373-4.031a3.453 3.453 0 0 0-4.989.921l-6.756 10.718c-.653 1.027.615 2.189 1.582 1.453l7.257-5.507a1.382 1.382 0 0 1 1.661-.005l5.373 4.031a3.453 3.453 0 0 0 4.989-.92l6.756-10.719c.653-1.027-.615-2.189-1.582-1.453ZM48 25c-12.958 0-23 9.492-23 22.31 0 6.706 2.749 12.5 7.224 16.503.375.338.602.806.62 1.31l.125 4.091a1.845 1.845 0 0 0 2.582 1.629l4.563-2.013a1.844 1.844 0 0 1 1.227-.093c2.096.579 4.331.884 6.659.884 12.958 0 23-9.491 23-22.31S60.958 25 48 25Zm0 42.621c-2.114 0-4.175-.273-6.133-.813a3.834 3.834 0 0 0-2.56.192l-4.346 1.917-.118-3.867a3.833 3.833 0 0 0-1.286-2.727C29.33 58.54 27 53.209 27 47.31 27 35.73 36.028 27 48 27s21 8.73 21 20.31-9.028 20.31-21 20.31Z"></path></svg>
                         <br />  <h5 className='text-white ml-7'> Message Your Friends With Direct.</h5>
                     </div>
+
+                    :
+
+                    <div className='flex justify-center mt-96 w-full h-screen'>
+                    <div class="text-center">
+                        <div role="status">
+                            <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                            </svg>
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
 
                 }
 

@@ -29,6 +29,9 @@ import Call from "./src/pages/user/call";
 import IncomingCall from "./src/components/user/incomingCall";
 import OutGoingCall from "./src/components/user/outgoingCall";
 import Err from "./src/pages/user/error";
+import { SocketProvider } from "./src/utils/socketProvider";
+import Loader1 from "./src/components/user/mainLoader";
+import DarkSpinner from "./src/components/user/spinner";
 const images = []
 const images1 = [
     "https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg",
@@ -60,8 +63,9 @@ const UserLayout = ()=>{
     return(
         <>
         <Provider store={Store}>
-       
+        <SocketProvider>
         <Outlet/>
+        </SocketProvider>
         </Provider>
         </>
     )
@@ -108,7 +112,7 @@ const AppRouter = createBrowserRouter([
            
             {
                 path:"/test",
-                element: <Test/>
+                element: <DarkSpinner/>
             },
             {
                 path:"/createPhoto",
@@ -143,11 +147,11 @@ const AppRouter = createBrowserRouter([
                 element: <Call />
             },
             {
-                path:"/incomingCall",
+                path:"/incomingCall/:id",
                 element: <IncomingCall />
             },
             {
-                path:"/outgoingCall",
+                path:"/outgoingCall/:id",
                 element: <OutGoingCall />
             },
             

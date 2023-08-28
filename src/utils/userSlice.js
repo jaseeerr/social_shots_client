@@ -9,7 +9,8 @@ const userSlice = createSlice({
     initialState:{
        
         login:null,
-        userdata:null
+        userdata:null,
+        busy:false
 
     },
     reducers:{
@@ -22,11 +23,15 @@ const userSlice = createSlice({
         
             state.userdata = action.payload
         },
+        updateBusy:(state,action)=>{
+            console.log("updated busy to: ",action.payload)
+            state.busy = action.payload
+        }
         
     }
 })
 
-export const {loginStatus,updateUserdata} = userSlice.actions
+export const {loginStatus,updateUserdata,updateBusy} = userSlice.actions
 
 export default userSlice.reducer
 

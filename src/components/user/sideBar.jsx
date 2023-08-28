@@ -13,10 +13,12 @@ import { setClickSearch } from '../../utils/commonSlice';
 import { useDispatch } from 'react-redux';
 import MyAxiosInstance from '../../utils/axios';
 const SideBar = () => {
+  const uname = useSelector(store=>store.userInfo?.userdata?.username)
+  const pic = useSelector(store=>store.userInfo?.userdata?.dp)
   const dispatch = useDispatch()
   const axiosInstance = MyAxiosInstance()
-const [username,setUsername] = useState(null)
-const [dp,setDp] = useState(null)
+const [username,setUsername] = useState(uname)
+const [dp,setDp] = useState(pic)
 const userdata = useSelector(store=>store.userInfo.userdata)
 const [showModal,setShowModal] = useState(false)
 const [notifyCount,setNotifyCount] = useState(0)
@@ -52,7 +54,6 @@ axiosInstance.get('messageCount').then((resp1)=>{
 
     //incoming notification
     socket.on("notify",(data)=>{
-
       setNotifyCount(data)
 
     })
@@ -73,6 +74,8 @@ axiosInstance.get('messageCount').then((resp1)=>{
       setMessageCount(response.data)
     })
 
+   
+
 
   },[socket])
  
@@ -92,6 +95,15 @@ axiosInstance.get('messageCount').then((resp1)=>{
     goto(`/${username}`)
   }
 
+
+  const openNewWindow = (id) => {
+    const width = 800;  // Set the desired width
+    const height = 600; // Set the desired height
+    const url = id
+
+    const windowFeatures = `width=${width},height=${height},resizable=yes,scrollbars=yes`;
+    window.open(url, '_blank', windowFeatures);
+};
 
 
   
@@ -236,23 +248,20 @@ axiosInstance.get('messageCount').then((resp1)=>{
               </a>
             </li>
 
-            <li className="mb-4 p-2  hover:bg-gray-400 rounded-md" onClick={()=>goto('/explore')}>
-              <a  className="text-white  flex items-center">
+            <li className="mb-4 p-2  hover:bg-gray-400 rounded-md" >
+              <Link to='/explore'  className="text-white  flex items-center">
               <FontAwesomeIcon icon={faCompass} style={{color: "ffffff",}} className='mr-2' />
               
                 Explore
-              </a>
+              </Link>
             </li>
             
-            <li className="mb-4 p-2 hover:bg-gray-400 rounded-md" onClick={()=>{
-              clickSearch()
-              goto('/explore')
-            }}>
-              <a href="" className="text-white  flex items-center" >
+            <li className="mb-4 p-2 hover:bg-gray-400 rounded-md" >
+              <Link to="/explore" className="text-white  flex items-center" >
               <FontAwesomeIcon icon={faMagnifyingGlass} style={{color: "ffffff",}} className='mr-2' />
               
                 Search
-              </a>
+              </Link>
             </li>
 
             <li className="mb-4 p-2 hover:bg-gray-400 rounded-md" onClick={()=>setShowModal(true)}>
@@ -293,11 +302,9 @@ axiosInstance.get('messageCount').then((resp1)=>{
             </li>
 
            
-            {/* Add more sidebar items as needed */}
           </ul>
         </div>
       </div>
-      {/* Rest of your content */}
     </div>
 {/* lg sidebar */}
 

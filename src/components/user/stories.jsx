@@ -20,12 +20,7 @@ function Stories() {
     const response = await axiosInstance.get("getstories")
     const now = Date.now()
     const temp = response.data.filter((x)=>Date.parse(x.expire) < now)
-    console.log(temp)
-    console.log("dd");
-    console.log(response.data[0])
-    console.log(Date.parse(response.data[0].expire))
-    console.log(now)
-    console.log(response)
+   
     const uniqueArray = removeDuplicates(response.data, item => item.uid);
 
     setStories(uniqueArray)
@@ -65,8 +60,12 @@ function removeDuplicates(array, key) {
   //useEffects
 
   useEffect(()=>{
+    if(localStorage.getItem('userToken'))
+    {
+      getData()
+    }
 
-    getData()
+  
   },[])
  
     return (

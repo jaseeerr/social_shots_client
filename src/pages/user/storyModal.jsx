@@ -29,11 +29,9 @@ const StoryModal = () => {
   const getData = async () => {
 
     const response = await axiosInstance.get("getstories")
-    console.log(response.data)
     let temp2 = response.data.map((x)=>x.username)
     temp2 = removeDuplicates(temp2)
     setNavList(temp2)
-    console.log(temp2)
     setAllStories(response.data)
     const temp = response.data.filter((x) => x.username == id )
     setUsername(temp[0].username)
@@ -49,8 +47,7 @@ const StoryModal = () => {
 }
 
 const run12 = () => {
-  console.log(navList.indexOf(id))
-  console.log(navList.length)
+
   if(navList.indexOf(id) == navList.length-1)
   {
     goto('/')
