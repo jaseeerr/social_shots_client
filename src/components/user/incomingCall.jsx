@@ -22,12 +22,21 @@ const IncomingCall = () => {
   const rejectCall =async ()=>{
      dispatch(updateBusy(false))
     socket.emit('rejectCall',fid)
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
+    const tabletQuery = window.matchMedia('(min-width: 768px) and (max-width: 1023px)');
+    if (mobileQuery.matches) {
+      goto(`/`)
+  } else if (tabletQuery.matches) {
+      goto(`/`)
+  } else {
     window.close()
+  }
   }
 
   const acceptCall = async ()=>{
     dispatch(updateBusy(true))
     setAccept(true)
+  
     await socket.emit('acceptCall',fid)
    
 
@@ -42,11 +51,10 @@ const IncomingCall = () => {
       console.log('call end incoming')
       console.log(data)
 
-      if(data.id==fid)
-      {
+     
        
-        window.close()
-      }
+      window.close() ? window.close() :  location.href = "https://socialshots.site/direct/0"
+      
 
     })
 

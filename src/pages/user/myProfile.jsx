@@ -81,7 +81,8 @@ function MyProfile() {
       if (Object.keys(data?.data1).length === 0 && data.data1.constructor === Object)
        {
        
-        goto('/explore')
+        // goto('/explore')
+        console.log(id)
         return
        }
     

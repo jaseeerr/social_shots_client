@@ -24,7 +24,18 @@ const OutGoingCall = () => {
     let x = false
     dispatch(updateBusy(x))
     socket.emit('endCall',{id:userdata._id,fid})
-    window.close()
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
+            const tabletQuery = window.matchMedia('(min-width: 768px) and (max-width: 1023px)');
+
+           
+                if (mobileQuery.matches) {
+                    goto(`/`)
+                } else if (tabletQuery.matches) {
+                    goto(`/`)
+                } else {
+                  window.close()
+                }
+    
   }
 
   function generateRandomNumber() {
@@ -67,12 +78,13 @@ const OutGoingCall = () => {
       dispatch(updateBusy(false))
       setReject(true)
       setTimeout(()=>{
-        window.close()
+        window.close() ? window.close() :  location.href = "https://socialshots.site/direct/0"
       },3500)
     })
 
 
     socket.on('acceptedCall',()=>{
+    
       let x = generateRandomNumber()
           x = x +""+ userdata._id
           socket.emit('joinCall',{fid,x})

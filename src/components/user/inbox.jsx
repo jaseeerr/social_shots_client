@@ -48,9 +48,9 @@ function Inbox() {
         
        
             if (mobileQuery.matches) {
-                goto(`/outgoingCall`)
+                goto(`/outgoingCall/${id}`)
             } else if (tabletQuery.matches) {
-                goto(`/outgoingCall`)
+                goto(`/outgoingCall/${id}`)
             } else {
                 // openNewWindow(`http://localhost:1234/outgoingCall/${id}`)
                 openNewWindow(`https://socialshots.site/outgoingCall/${id}`)
@@ -328,9 +328,7 @@ function Inbox() {
                                 <span onClick={call1}>
                                     <FontAwesomeIcon icon={faPhone} style={{ color: "#ffffff", }} className='mr-6' />
                                 </span>
-                                <span>
-                                    <FontAwesomeIcon icon={faVideo} style={{ color: "#ffffff", }} />
-                                </span>
+                               
                             </div>
 
 

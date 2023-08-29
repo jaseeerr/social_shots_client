@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import logoRec from '../../../public/assets/LOGOBig.png'; 
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,7 @@ import { updateBusy } from "../../utils/userSlice";
 
 const Call = () => {
 
+  const goto = useNavigate()
   const {id} = useParams()
   const dispatch = useDispatch()
   const uname = useSelector(store=>store.userInfo?.userdata?.username)
@@ -51,7 +52,20 @@ const Call = () => {
       branding:{
         logoURL:logoRec
       },
-      showRoomDetailsButton:false
+      showRoomDetailsButton:false,
+      showLeavingView:false,
+      onLeaveRoom: () => {
+        
+       
+         window.close() ? window.close() :  location.href = "https://socialshots.site/direct/0"
+    
+   
+      },
+      onUserLeave: () =>{
+       
+         window.close() ?  window.close() :  location.href = "https://socialshots.site/"
+    
+      }
     })
   }
 
