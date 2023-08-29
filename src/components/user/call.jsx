@@ -36,7 +36,7 @@ const Call = () => {
 
     const appID = 2132640648
     const serverSecret = "a1cf7245f0da31033c50b87e2d7c39b4"
-    const kitToken =  ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, id,"code",uname );
+    const kitToken =  ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, id,"user1","user2" );
     const zc = ZegoUIKitPrebuilt.create(kitToken)
     zc.joinRoom({
       container:element,
