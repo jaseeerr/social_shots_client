@@ -28,13 +28,7 @@ const OutGoingCall = () => {
             const tabletQuery = window.matchMedia('(min-width: 768px) and (max-width: 1023px)');
 
            
-                if (mobileQuery.matches) {
-                    goto(`/`)
-                } else if (tabletQuery.matches) {
-                    goto(`/`)
-                } else {
-                  window.close()
-                }
+            window.close() ? window.close() :  location.href = "https://socialshots.site/direct/0"
     
   }
 
