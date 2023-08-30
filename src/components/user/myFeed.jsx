@@ -28,40 +28,18 @@ const MyFeed = () => {
 
 
 
+        setPosts(response.data)
+      
         setSuggested(response4.data)
+        setloader(false)
 
 
 
 
-
-        let dat = response.data.map((x) => {
-          return x.uid
-        })
+     
 
 
-        axiosInstance.post('shortlist', dat).then((response1) => {
-
-          let dat1 = response1.data
-          let dat2 = response.data
-
-
-          for (let i = 0; i < dat1.length; i++) {
-
-            for (let j = 0; j < dat2.length; j++) {
-              if (dat1[i].uid == dat2[j].uid) {
-                dat2[j].username = dat1[i].username
-                dat2[j].profilePicture = dat1[i].dp
-
-
-              }
-            }
-          }
-
-          setPosts(response.data)
-          setloader(false)
-
-
-        })
+        
 
 
 

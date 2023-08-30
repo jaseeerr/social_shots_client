@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux'
 import { IMG_CDN } from '../../config/urls'
 import MyAxiosInstance from '../../utils/axios'
 import { get } from 'lodash'
+const nullDp = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+
 function ProfileBar() {
 
   const axiosInstance = MyAxiosInstance()
@@ -28,10 +30,11 @@ function ProfileBar() {
   const getData = async ()=>{
 
     const response = await  axiosInstance.get('myData')
-    const res = await axiosInstance.get('suggested')
-    setSuggested(res.data)
     setUsername(response?.data?.username)
     setDp(response?.data?.dp)
+    const res = await axiosInstance.get('suggested')
+    setSuggested(res.data)
+  
      
 
   }
@@ -62,7 +65,7 @@ function ProfileBar() {
      <div className="flex p-2  rounded-md py-5 w-64 ">
       <span className='flex cursor-pointer' onClick={goProfile}>
       <img
-              src={dp && IMG_CDN+dp}
+              src={dp ? IMG_CDN+dp : nullDp}
               alt="User Profile"
               className="w-10 h-10 rounded-full object-cover"
             />

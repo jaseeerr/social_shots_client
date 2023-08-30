@@ -13,18 +13,34 @@ function Stories() {
   const axiosInstance = MyAxiosInstance()
   const [stories,setStories] = useState([])
   const [dead,setDead] = useState([])
-
+  
 // functions
   const getData = async()=>{
    
     const response = await axiosInstance.get("getstories")
-    const now = Date.now()
-    const temp = response.data.filter((x)=>Date.parse(x.expire) < now)
-   
-    const uniqueArray = removeDuplicates(response.data, item => item.uid);
+    const now = new Date()
+    const dead = response.data.filter((x)=>Date.parse(x.expire) < now)
+    expireAction(dead)
+    const temp = response.data.filter((x)=>Date.parse(x.expire) > now)
+    // console.log(Date.parse(now))
+    console.log(response.data)
+    console.log(temp)
+  
+    const uniqueArray = removeDuplicates(temp, item => item.uid);
 
     setStories(uniqueArray)
     
+  }
+
+  const expireAction = async (data)=>{
+    const uids = data.map((x)=>x._id)
+    console.log("uids")
+    console.log(uids);
+    console.log("uids")
+  let response = await axiosInstance.post('expiredstories',uids)
+  console.log(response)
+  
+
   }
 
   function generateRandomWord() {
@@ -77,7 +93,7 @@ function removeDuplicates(array, key) {
 </span>
      </Link> */}
 
-       {stories.length > 0 && stories.map((x)=>{
+       {stories.length > 0 ? stories.map((x)=>{
         return(
           <Link to={`/stories/${x.username}`} key={x._id} className="story-link  ml-2">
           <img  src={x.dp ? IMG_CDN+x.dp : "https://i1.sndcdn.com/avatars-000252187355-42nbzf-t500x500.jpg"} alt="" className='rounded-full w-20 h-20  border-2 border-pink-500 object-cover' />
@@ -86,9 +102,15 @@ function removeDuplicates(array, key) {
           </span>
           </Link>
         )
-       })}
+       }) 
+       :
+       <Link to='' className="story-link  ml-2">
+       <span className='text-white'>No Stories available....      
+</span>
+     </Link>
+     }
 
-        <Link to='/stories/0' className="story-link  ml-2">
+        {/* <Link to='/stories/0' className="story-link  ml-2">
         <img  src="https://i1.sndcdn.com/avatars-000252187355-42nbzf-t500x500.jpg" alt="" className='rounded-full w-20 h-20  border-2 border-pink-500' />
         <span className='text-sm text-white flex justify-center'>
           {generateRandomWord()}
@@ -184,7 +206,7 @@ function removeDuplicates(array, key) {
           {generateRandomWord()}
         </span>
         </Link>
-       
+        */}
 
        
         

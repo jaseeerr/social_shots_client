@@ -28,7 +28,11 @@ const OutGoingCall = () => {
             const tabletQuery = window.matchMedia('(min-width: 768px) and (max-width: 1023px)');
 
            
-            window.close() ? window.close() :  location.href = "https://socialshots.site/direct/0"
+           
+          
+              window.close();
+              location.href = "https://socialshots.site/direct/0";
+           
     
   }
 
@@ -41,9 +45,15 @@ const OutGoingCall = () => {
 
 
   useEffect(() => {
+    if(!localStorage.getItem('callto'))
+    {
+        window.close()
+        location.href = "https://socialshots.site/direct/0"
+    }
     let x = true
     dispatch(updateBusy(x))
     socket.emit('join_room',userdata._id)
+    
     socket.emit("outgoingCall", {id,callfrom:userdata.username,callfromdp:userdata.dp,callfromid:userdata._id})
     const handleBeforeUnload = () => {
       dispatch(updateBusy(false))
@@ -72,7 +82,9 @@ const OutGoingCall = () => {
       dispatch(updateBusy(false))
       setReject(true)
       setTimeout(()=>{
-        window.close() ? window.close() :  location.href = "https://socialshots.site/direct/0"
+        window.close();
+        location.href = "https://socialshots.site/direct/0";
+        
       },3500)
     })
 

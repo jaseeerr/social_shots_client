@@ -53,7 +53,8 @@ const IncomingCall = () => {
 
      
        
-      window.close() ? window.close() :  location.href = "https://socialshots.site/direct/0"
+      window.close();
+      location.href = "https://socialshots.site/direct/0";
       
 
     })
@@ -68,6 +69,11 @@ const IncomingCall = () => {
 
 
   useEffect(() => {
+    if(!localStorage.getItem('callfrom'))
+    {
+        window.close()
+        location.href = "https://socialshots.site/direct/0"
+    }
     const handleBeforeUnload = () => {
      
       dispatch(updateBusy(false))

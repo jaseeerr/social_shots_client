@@ -57,8 +57,9 @@ const Call = () => {
       onLeaveRoom: () => {
         
        
-         window.close() ? window.close() :  location.href = "https://socialshots.site/direct/0"
-    
+       
+         window.close();
+         location.href = "https://socialshots.site/direct/0";
    
       },
       onUserLeave: () =>{
