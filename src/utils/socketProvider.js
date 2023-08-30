@@ -52,8 +52,8 @@ const SocketProvider = ({ children }) => {
                 } else if (tabletQuery.matches) {
                     goto(`/incomingCall/${id}`)
                 } else {
-                    openNewWindow(`http://localhost:1234/incomingCall/${id}`)
-                    // openNewWindow(`https://socialshots.site/incomingCall/${id}`)
+                    // openNewWindow(`http://localhost:1234/incomingCall/${id}`)
+                    openNewWindow(`https://socialshots.site/incomingCall/${id}`)
                 }
       
                

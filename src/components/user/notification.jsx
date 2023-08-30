@@ -17,23 +17,66 @@ const Notification = () => {
   const axiosInstance = MyAxiosInstance()
   const goto = useNavigate()
   const [notification, setNotification] = useState([])
+  const [allNotification, setAllNotification] = useState([])
   const [request, setRequest] = useState([])
   const userdata = useSelector(store=>store.userInfo.userdata)
  const [loader,setLoader] = useState(true)
+ const [pages,setPages] = useState([])
+const [currentPage,setCurrentPage] = useState()
+const [totalLen,setTotalLen] = useState(0)
+
+
+ function timeSinceDate(startDate) {
+  const startDate1 = new Date(startDate);
+  const now = new Date();
+  const timeDiff = now - startDate1;
+
+  if (timeDiff < 60000) {
+    const secondsDiff = Math.floor(timeDiff / 1000);
+    return `${secondsDiff} ${secondsDiff === 1 ? 'sec' : 'secs'}`;
+  } else if (timeDiff < 3600000) {
+    const minutesDiff = Math.floor(timeDiff / (1000 * 60));
+    return `${minutesDiff} ${minutesDiff === 1 ? 'min' : 'mins'}`;
+  } else if (timeDiff < 86400000) {
+    const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
+    return `${hoursDiff} ${hoursDiff === 1 ? 'hr' : 'hrs'}`;
+  } else if (timeDiff < 604800000) {
+    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    return `${daysDiff} ${daysDiff === 1 ? 'day' : 'days'}`;
+  } else {
+    const weeksDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24 * 7));
+    return `${weeksDiff} ${weeksDiff === 1 ? 'week' : 'weeks'}`;
+  }
+}
+
 
 
   const getData = async () => {
 
     const response = await axiosInstance.get('getNotification')
 
-    const temp = response.data.notification
+    let temp = response.data.notification
+    
+    temp = temp.map(obj => {
+      const y = timeSinceDate(obj.date)
+      return {
+        ...obj, // Spread existing properties
+        since: y , // New property
+      };
+    });
+    setAllNotification(temp)
    
+    for(let i=1;i<=Math.ceil(temp.length/7);i++)
+    {
+      setPages(prevArray => [...prevArray, i]);
+    }
+    temp = temp.slice(0,7)
     setNotification(temp)
     setRequest(response.data.request)
     setLoader(false)
     
   }
-
+ 
   const acceptRequest = async (id,username)=>{
  
   await axiosInstance.get(`accept/${id}`)
@@ -74,6 +117,17 @@ const Notification = () => {
     }
 
   }, [])
+
+
+
+  const changePage = (x)=>{
+    console.log(allNotification.length)
+    const lastPost = x * 7
+    const firstPost = lastPost - 7
+    let y = allNotification
+    y = y.slice(firstPost,lastPost)
+    setNotification(y)
+  }
 
   return (
     <>
@@ -150,7 +204,7 @@ const Notification = () => {
            <div className="flex items-center justify-between">
              <div className="flex items-center">
                <img src={IMG_CDN+x.fromDp} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
-               <span className="font-semibold ">{x.fromUsername} {x.type == "like" ? " Liked your post" : x.type=="follow" ? "Started following you" : "Commented on your Post"}</span>
+               <span className="font-semibold ">{x.fromUsername} {x.type == "like" ? " Liked your post" : x.type=="follow" ? "Started following you." : "Commented on your Post."} <span>{x.since}</span></span>
              </div>
 
            </div>
@@ -160,9 +214,22 @@ const Notification = () => {
          </div>
          )
        })
+     
        :
        <span className="flex justify-center">No Notifications</span>
      }
+       <div className="notification p-4 mb-4 border-t border-gray-400 flex justify-center">
+       <div className="flex items-center justify-between">
+         <div className="flex items-center">
+          {pages.length > 0 && pages.map((x)=>  <span onClick={()=>changePage(x)} className="font-semibold px-3 bg-blue-950 mr-2 cursor-pointer rounded-md">{x}</span> )}
+         
+         </div>
+
+       </div>
+       <span className="max-w-fit">
+
+       </span>
+     </div>
 
 
 

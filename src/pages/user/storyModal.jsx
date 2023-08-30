@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faForward, faXmark,faBackward,faEye } from '@fortawesome/free-solid-svg-icons';
 const nullDp = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+
 const StoryModal = () => {
   //  states and variables
   const userdata = useSelector(store=>store.userInfo.userdata)
@@ -26,7 +27,9 @@ const StoryModal = () => {
   const [allStories, setAllStories] = useState([])
   const [navList,setNavList] = useState([])
   const [filteredList,setFilteredList] = useState([])
-  
+  const [views,setViews] = useState([])
+  const [showViews,setShowViews] = useState()
+  const [pauseStory,setPauseStory] = useState(false)
 
   // functions
   const getData = async () => {
@@ -43,8 +46,7 @@ const StoryModal = () => {
     let temp = response.data.filter((x) => x.username == id  )
      temp = temp.filter((x) =>  Date.parse(x.expire) > currentTime )
     setFilteredList(temp)
-    console.log("temp")
-    console.log(temp);
+   
     setUsername(temp[0].username)
     setDp(temp[0].dp)
     
@@ -60,10 +62,15 @@ const StoryModal = () => {
     console.log("storyViewdddd")
     const x = index +1
     setIndex(index+1)
-    if(!filteredList[x].views.includes(userdata._id) && filteredList[x].uid!=userdata._id)
+    if(!filteredList[x]?.views?.includes(userdata._id) && filteredList[x]?.uid!=userdata._id)
     {
-      await axiosInstance.get(`storyview/${filteredList[x]._id}`)
-      setFilteredList(prevArray => [...prevArray, userdata._id]);
+      if(filteredList[x]?._id)
+      {
+        await axiosInstance.get(`storyview/${filteredList[x]?._id}`)
+        filteredList[x]?.views.push(userdata?._id)
+        setViews(prevArray => [...prevArray, userdata?._id]);
+      }
+     
     }
 
 
@@ -91,16 +98,16 @@ const forward = () => {
 function timeSinceDate(startDate) {
   const startDate1 = new Date(startDate)
   const now = new Date();
-  const timeDiff = now - startDate1; // Difference in milliseconds
+  const timeDiff = now - startDate1; 
 
-  if (timeDiff < 60000) { // Less than a minute
-    const secondsDiff = Math.floor(timeDiff / 1000); // Convert milliseconds to seconds
+  if (timeDiff < 60000) { 
+    const secondsDiff = Math.floor(timeDiff / 1000); 
     return `${secondsDiff} ${secondsDiff === 1 ? 'sec' : 'sec'}`;
-  } else if (timeDiff < 3600000) { // Less than an hour
-    const minutesDiff = Math.floor(timeDiff / (1000 * 60)); // Convert milliseconds to minutes
+  } else if (timeDiff < 3600000) {
+    const minutesDiff = Math.floor(timeDiff / (1000 * 60)); 
     return `${minutesDiff} ${minutesDiff === 1 ? 'min' : 'mins'}`;
-  } else { // More than an hour
-    const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60)); // Convert milliseconds to hours
+  } else { 
+    const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60)); 
     return `${hoursDiff} ${hoursDiff === 1 ? 'hr' : 'hrs'}`;
   }
 }
@@ -124,9 +131,15 @@ function timeSinceDate(startDate) {
   }
 
 
+
+
   return (
     <>
-      <div className="bg-black flex justify-center items-center min-h-screen">
+     
+
+      <div className="bg-black flex justify-center items-center min-h-screen" onClick={()=>{showViews && 
+        setShowViews(false)
+        setPauseStory(false)}}>
 
 
         <div className="w-9/12 md:w-1/2 lg:w-1/3 h-4/5 bg-gray-800 shadow-lg rounded-lg p-6">
@@ -152,15 +165,20 @@ function timeSinceDate(startDate) {
           <div className="flex justify-center items-center mb-4 ">
             <img onClick={goProfile} src={dp ? IMG_CDN+dp : nullDp} alt="Profile" className="w-8 h-8 rounded-full mr-2 object-cover" />
             <span onClick={goProfile} className="text-white">{stories1.length > 0 && username}</span>
-            <FontAwesomeIcon icon={faEye} style={{color: "#ffffff",}} className='ml-3 cursor-pointer' />
+            {filteredList[index]?.uid==userdata?._id &&  <FontAwesomeIcon onClick={()=>{
+              setShowViews(true)
+              setPauseStory(true)
+            }} icon={faEye} style={{color: "#ffffff",}} className='ml-3 cursor-pointer' />}
+             {filteredList[index]?.uid==userdata?._id && <span className='text-white ml-2 font-semibold'>{filteredList[index]?.views.length}</span>}
           </div>
 
           <div className="w-full h-5/6  flex justify-center">
-            <div className='hidden md:block'>
-              <Stories stories={stories1} onAllStoriesEnd={forward} onStoryStart={updateView} />
+            {/* <div className='hidden md:block'> */}
+              <div>
+              <Stories stories={stories1} isPaused={pauseStory}  onAllStoriesEnd={forward} onStoryStart={updateView} onPrevious={()=>{setIndex(index-1)}} />
             </div>
             <div className='sm:hidden'>
-              <Stories stories={stories1} width={250} height={450} onAllStoriesEnd={forward} onStoryStart={updateView} />
+              {/* <Stories stories={stories1} width={250} height={450} onAllStoriesEnd={forward} onStoryStart={updateView} /> */}
             </div>
 
           </div>
@@ -169,9 +187,33 @@ function timeSinceDate(startDate) {
 
       </div>
 
+      {showViews && 
+      <div className="fixed inset-1 z-50 bg-gray-900 bg-opacity-50 flex items-center justify-center" >
+      <div className="bg-black p-8 rounded-lg w-80">
+        <h2 className="text-xl font-semibold mb-2 text-white text-center">{filteredList[index]?.views.length}Views</h2>
+        <span className='text-white'>
+     
 
+     
+        </span>
+        <button
+          className="mt-4 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm ml-24 "
+          onClick={()=>setShowViews(false)}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+    
+    }
     </>
   );
+
+
+  
 };
+
+
+
 
 export default StoryModal;

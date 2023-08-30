@@ -57,8 +57,8 @@ function Inbox1() {
             } else if (tabletQuery.matches) {
                 goto(`/outgoingCall/${id}`)
             } else {
-                openNewWindow(`http://localhost:1234/outgoingCall/${id}`)
-                // openNewWindow(`https://socialshots.site/outgoingCall/${id}`)
+                // openNewWindow(`http://localhost:1234/outgoingCall/${id}`)
+                openNewWindow(`https://socialshots.site/outgoingCall/${id}`)
             }
        
          
