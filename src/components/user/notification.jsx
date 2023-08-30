@@ -218,7 +218,8 @@ const [totalLen,setTotalLen] = useState(0)
        :
        <span className="flex justify-center">No Notifications</span>
      }
-       <div className="notification p-4 mb-4 border-t border-gray-400 flex justify-center">
+     {allNotification.length > 7 &&
+       <div className="notification p-2 mb-4 border-t border-gray-400 flex justify-center">
        <div className="flex items-center justify-between">
          <div className="flex items-center">
           {pages.length > 0 && pages.map((x)=>  <span onClick={()=>changePage(x)} className="font-semibold px-3 bg-blue-950 mr-2 cursor-pointer rounded-md">{x}</span> )}
@@ -231,7 +232,7 @@ const [totalLen,setTotalLen] = useState(0)
        </span>
      </div>
 
-
+}
 
 
 
