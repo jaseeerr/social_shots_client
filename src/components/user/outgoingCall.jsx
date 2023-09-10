@@ -73,7 +73,6 @@ const OutGoingCall = () => {
   useEffect(()=>{
 
     socket.on('lineBusy1',()=>{
-      console.log("linebusyahh monu")
       setLineBusy(true)
 
     })

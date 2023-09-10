@@ -7,18 +7,20 @@ import { Toaster, toast } from 'react-hot-toast';
 import { IMG_CDN, VIDEO_CDN,SOCKET_URL } from '../../config/urls';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { updateUserdata } from '../../utils/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import io from 'socket.io-client'
 const socket = io.connect(SOCKET_URL)
 
 function MyProfile() {
+  const dispatch = useDispatch()
 
   const [bioBtn, setBioBtn] = useState(false)
   const [newp, setNewp] = useState(null)
   const [bload, setBload] = useState(false)
 
-
+ 
   const [username, setUsername] = useState()
   const [email, setEmail] = useState()
   const [phone, setPhone] = useState()
@@ -51,12 +53,20 @@ function MyProfile() {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setImageFile(file);
-    setImageUrl(URL.createObjectURL(file));
-    const data = userdata
-    data.dp = imageFile
-
-    setUserdata(data)
+    if(!file?.type.startsWith('image/'))
+    {
+      toast.error("Invalid File")
+    }
+    else
+    {
+      setImageFile(file);
+      setImageUrl(URL.createObjectURL(file));
+      const data = userdata
+      data.dp = imageFile
+  
+      setUserdata(data)
+    }
+  
   };
 
   const { id } = useParams()
@@ -81,8 +91,7 @@ function MyProfile() {
       if (Object.keys(data?.data1).length === 0 && data.data1.constructor === Object)
        {
        
-        // goto('/explore')
-        console.log(id)
+        goto('/explore')
         return
        }
     
@@ -346,7 +355,7 @@ function MyProfile() {
   const logout = () => {
 
     localStorage.removeItem('userToken')
-
+    dispatch(updateUserdata({}))
     goto('/login')
 
   }
@@ -590,6 +599,7 @@ function MyProfile() {
                           </svg>
                         </span>
                         <input disabled
+                        
                           value={username && username}
                           type="text" id="website-admin" className="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={userdata.username} />
                       </div>
@@ -782,7 +792,7 @@ function MyProfile() {
                             getData()
                           }
                           else {
-                            toast.error("UNKNOWN ERROR OCCURED")
+                            toast.error("Couldn't update email.")
                           }
                           setShowEmailModal(false)
 
@@ -950,10 +960,11 @@ function MyProfile() {
                         axiosInstance.get(`sentotp/${phone}`).then((response) => {
 
                           if (response.data.success) {
+                            setVerifyBtn(true)
                             toast.success("OTP SENT")
                           }
                           else {
-                            toast.error("UNKNOWN ERROR OCCURRED")
+                            toast.error("INVALID PHONE NUMBER")
                           }
 
                         })
@@ -962,7 +973,7 @@ function MyProfile() {
 
 
 
-                        setVerifyBtn(true)
+                        
                         setOtpSend(false)
                       }}
                       className="mt-4 mr-3 bg-blue-500 text-white px-2 py-1 rounded-lg text-sm text-center cursor-pointer">

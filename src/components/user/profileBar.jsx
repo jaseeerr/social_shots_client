@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector,useDispatch } from 'react-redux'
+import { updateUserdata } from '../../utils/userSlice'
 import { IMG_CDN } from '../../config/urls'
 import MyAxiosInstance from '../../utils/axios'
 import { get } from 'lodash'
@@ -9,6 +10,7 @@ const nullDp = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-pic
 function ProfileBar() {
 
   const axiosInstance = MyAxiosInstance()
+  const dispatch = useDispatch()
   const [username,setUsername] = useState(null)
   const [dp,setDp] = useState(null)
   const [suggested,setSuggested] = useState([])
@@ -21,8 +23,9 @@ function ProfileBar() {
 
   const logout = () => {
 
-    localStorage.removeItem('userToken')
 
+    localStorage.removeItem('userToken')
+  dispatch(updateUserdata({}))
     goto('/login')
 
   }

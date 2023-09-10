@@ -38,6 +38,10 @@ function FindAccount() {
             else if (response.data.bademail) {
                 toast.error("Couldn't find an account with this email.")
             }
+            else if(response.data.spam)
+            {
+                toast.error("Link already sent, Check you mail or try again in sometime.")
+            }
             else {
                 toast.error("Unknown Error Occurred.")
             }
@@ -46,7 +50,7 @@ function FindAccount() {
 
                 goto('/login')
                 toast.dismiss()
-            },900)
+            },1800)
             setBload(false)
             
         })

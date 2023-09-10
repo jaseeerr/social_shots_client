@@ -34,8 +34,7 @@ const StoryModal = () => {
   // functions
   const getData = async () => {
     const currentTime = new Date()
-    console.log(Date.now(currentTime))
-    console.log("current")
+  
     const response = await axiosInstance.get("getstories")
     const tem = response.data.filter((x)=>Date.parse(x.expire) > currentTime)
     let temp2 = tem.map((x)=>x.username)
@@ -59,7 +58,6 @@ const StoryModal = () => {
   }
 
   const updateView = async ()=>{
-    console.log("storyViewdddd")
     const x = index +1
     setIndex(index+1)
     if(!filteredList[x]?.views?.includes(userdata._id) && filteredList[x]?.uid!=userdata._id)

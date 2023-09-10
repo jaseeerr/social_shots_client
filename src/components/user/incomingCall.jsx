@@ -48,8 +48,7 @@ const IncomingCall = () => {
 
     socket.on('endCall1',async(data)=>{
 
-      console.log('call end incoming')
-      console.log(data)
+      
 
      
        

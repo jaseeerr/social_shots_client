@@ -28,7 +28,8 @@ const MyAxiosInstance = (opt) => {
    // Response interceptor
    instance.interceptors.response.use(
     (response) => {
-    
+ 
+   
       if(response.data.blocked && localStorage.getItem('userToken'))
       {
        

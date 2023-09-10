@@ -23,8 +23,7 @@ function Stories() {
     expireAction(dead)
     const temp = response.data.filter((x)=>Date.parse(x.expire) > now)
     // console.log(Date.parse(now))
-    console.log(response.data)
-    console.log(temp)
+ 
   
     const uniqueArray = removeDuplicates(temp, item => item.uid);
 
@@ -34,11 +33,8 @@ function Stories() {
 
   const expireAction = async (data)=>{
     const uids = data.map((x)=>x._id)
-    console.log("uids")
-    console.log(uids);
-    console.log("uids")
+    
   let response = await axiosInstance.post('expiredstories',uids)
-  console.log(response)
   
 
   }

@@ -24,7 +24,7 @@ const userSlice = createSlice({
             state.userdata = action.payload
         },
         updateBusy:(state,action)=>{
-            console.log("updated busy to: ",action.payload)
+            
             state.busy = action.payload
         }
         

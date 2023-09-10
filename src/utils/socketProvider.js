@@ -31,8 +31,6 @@ const SocketProvider = ({ children }) => {
 
     socket.on('incomingCall1', async (data) => {
 
-        console.log("incoming call")
-        console.log("busy: ",busy)
         if(!busy)
         {
             let x = true
@@ -60,7 +58,7 @@ const SocketProvider = ({ children }) => {
         }
         else
         {
-            console.log("busyyy")
+            
             socket.emit('lineBusy',data.callfromid)
         }
         
@@ -100,7 +98,6 @@ const SocketProvider = ({ children }) => {
   );
 };
 
-// Custom hook to access the socket instance anywhere in your app
 const useSocket = () => useContext(SocketContext);
 
 export { SocketProvider, useSocket };
