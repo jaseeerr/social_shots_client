@@ -205,7 +205,7 @@ axiosInstance.get('messageCount').then((resp1)=>{
             </li>
 
             <li className="mb-4 p-2" >
-              <Link to='' className="text-white hover:text-gray-300 flex items-center">
+              <Link onClick={()=>setShowModal(true)} className="text-white hover:text-gray-300 flex items-center">
               <FontAwesomeIcon icon={faSquarePlus} style={{color: "ffffff",}} className='mr-2' />
               
                  
