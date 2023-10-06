@@ -29,7 +29,7 @@ const MyAxiosInstance = (opt) => {
    instance.interceptors.response.use(
     (response) => {
  
-   
+      
       if(response.data.blocked && localStorage.getItem('userToken'))
       {
        
@@ -39,13 +39,13 @@ const MyAxiosInstance = (opt) => {
       return response;
     },
     (error) => {
-  
-      console.error("API Error:", error);
-      return Promise.reject(error);
+      localStorage.removeItem('userToken')
+      console.error("API Error:", error)
+      return Promise.reject(error)
     }
-  );
+  )
 
-  return instance;
-};
+  return instance
+}
 
 export default MyAxiosInstance;
