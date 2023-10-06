@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import icon from '../../../public/assets/icon1.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile } from '@fortawesome/free-solid-svg-icons';
+import { faFile,faGlasses } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router';
 import toast, {Toaster} from 'react-hot-toast';
 import { Link } from 'react-router-dom';
@@ -76,6 +76,12 @@ function AdminNavbar() {
             <Link to="/admin/postlist" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
             <FontAwesomeIcon icon={faFile} style={{color: "#ffffff",}} />
                <span className="flex-1 ml-3 whitespace-nowrap">Posts</span>
+            </Link>
+         </li>
+         <li>
+            <Link to="/admin/visitors" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <FontAwesomeIcon icon={faGlasses} style={{color: "#ffffff",}} />
+               <span className="flex-1 ml-3 whitespace-nowrap">Visitors</span>
             </Link>
          </li>
        

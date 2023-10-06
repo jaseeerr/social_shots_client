@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import { Provider } from "react-redux"
+import { Provider, useSelector } from "react-redux"
 import Store from "./src/utils/store";
 
 import Signup from "./src/pages/user/signup";
@@ -32,6 +32,9 @@ import Err from "./src/pages/user/error";
 import { SocketProvider } from "./src/utils/socketProvider";
 import Loader1 from "./src/components/user/mainLoader";
 import DarkSpinner from "./src/components/user/spinner";
+import axios from "axios";
+import { BASE_URL } from "./src/config/urls";
+import Visitors from "./src/pages/admin/visitors";
 const images = []
 const images1 = [
     "https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg",
@@ -55,8 +58,88 @@ const images1 = [
     "https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg",
     "https://c1.wallpaperflare.com/preview/968/514/572/head-man-figure-art.jpg",
 ]
+
 const UserLayout = ()=>{
 
+    useEffect(()=>{
+
+        const x = Number(localStorage.getItem('saved'))
+        const x1 = new Date(x)
+        const m = x1.getMonth()
+        const d = x1.getDay()
+        const y = x1.getFullYear()
+        const x2 = new Date()
+        const m1 = x2.getMonth()
+        const d1 = x2.getDay()
+        const y1 = x2.getFullYear()
+
+        console.log(x)
+
+        if(!localStorage.getItem('saved') || m!=m1 && d!=d1 && y!=y1)
+        {
+
+          
+            console.log(navigator)
+            const data = {
+                username:localStorage.getItem('account'),
+                browser:navigator?.userAgentData?.brands[0].brand,
+                platform:navigator?.userAgentData?.platform,
+                mobile:navigator?.userAgentData?.mobile,
+                location:null
+            }
+          
+
+
+            if ("geolocation" in navigator) {
+                // Geolocation is available
+                const options = {
+                  enableHighAccuracy: true, // Request high-accuracy location data
+                };
+              
+                navigator.geolocation.getCurrentPosition(
+                  function (position) {
+                    // Success callback: This function is called when the user's location is retrieved successfully.
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+              data.location = `https://www.google.com/maps/place/${latitude}+${longitude}`
+                
+                  },
+                  function (error) {
+                    // Error callback: This function is called if there is an error retrieving the location.
+                    switch (error.code) {
+                      case error.PERMISSION_DENIED:
+                        console.error("User denied the request for Geolocation.");
+                        break;
+                      case error.POSITION_UNAVAILABLE:
+                        console.error("Location information is unavailable.");
+                        break;
+                      case error.TIMEOUT:
+                        console.error("The request to get user location timed out.");
+                        break;
+                      case error.UNKNOWN_ERROR:
+                        console.error("An unknown error occurred.");
+                        break;
+                    }
+                  },
+                  options // Pass the options object here
+                );
+              } else {
+                // Geolocation is not available in this browser
+                console.error("Geolocation is not supported in your browser.");
+              }
+              
+
+              axios.post(`${BASE_URL}visitors`,data)
+              const time = Date.now()+""
+              localStorage.setItem('saved',time)
+
+           
+        }
+
+
+
+      
+    },[])
     
    
 
@@ -195,6 +278,10 @@ const AppRouter = createBrowserRouter([
             {
                 path:"/admin/postlist",
                 element:<PostList/>
+            },
+            {
+                path:"/admin/visitors",
+                element:<Visitors/>
             }
         ]
     },

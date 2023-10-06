@@ -22,6 +22,8 @@ const userSlice = createSlice({
         updateUserdata:(state,action)=>{
         
             state.userdata = action.payload
+            console.log("s=from slice","\n",action.payload)
+            localStorage.setItem('account',action.payload.username)
         },
         updateBusy:(state,action)=>{
             

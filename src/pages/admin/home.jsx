@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Chart from '../../components/admin/chart'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers,faImages,faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faUsers,faImages,faVideo,faGlasses } from '@fortawesome/free-solid-svg-icons';
 import './scroll.css'
 import { useNavigate } from 'react-router';
 import MyAxiosInstance from '../../utils/axios';
@@ -16,6 +16,8 @@ const [videoChart,setVideoChart] = useState([])
 const [imageChart,setImageChart] = useState([])
 const [photoCount,setPhotoCount] = useState(0)
 const [videoCount,setVideoCount] = useState(0)
+const [visitorsCount,setVisitorsCount] = useState()
+const [visitorsChart,setVisitorsChart] = useState([])
 
 
 const getData = async ()=>{
@@ -27,7 +29,8 @@ const getData = async ()=>{
     setVideoCount(response.data.videoCount)
     setImageChart(response.data.imageChart)
     setVideoChart(response.data.videoChart)
-  
+    setVisitorsCount(response.data.visitorsCount)
+    setVisitorsChart(response.data.visitorsChart)
 
 
 }
@@ -46,15 +49,24 @@ const data ={
     labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
     datasets:[{
         label:"Users",
-        data:userChart
+        data:userChart,
+        borderColor:'rgb(10, 104, 255)',
     },
     {
         label:"Images",
-        data:imageChart
+        data:imageChart,
+        borderColor:'rgb(255, 209, 82)',
     },
     {
         label:"Videos",
-        data:videoChart
+        data:videoChart,
+        borderColor: 'rgb(255, 74, 74)',
+    },
+    {
+      label:"Visitors",
+      data:visitorsChart,
+      borderColor:'rgb(74, 255, 164)',
+      
     },
 ],
     
@@ -69,7 +81,6 @@ const data ={
 
   return (
   
-    
 
 <div className='mt-32 ml-1 sm:ml-80 sm:mt-28 p-10 flex-none justify-center '>
 
@@ -85,6 +96,10 @@ const data ={
     <div className='bg-gray-800 mx-2 sm:mx-4 mb-5 sm:mb-10 p-4 sm:p-7 text-center rounded-xl'>
       <FontAwesomeIcon icon={faVideo} style={{ color: "#ffffff" }} size='xl' />
       <p className='text-center text-white mt-2'>{videoCount} Videos</p>
+    </div>
+    <div className='bg-gray-800 mx-2 sm:mx-4 mb-5 sm:mb-10 p-4 sm:p-7 text-center rounded-xl'>
+      <FontAwesomeIcon icon={faGlasses} style={{ color: "#ffffff" }} size='xl' />
+      <p className='text-center text-white mt-2'>{visitorsCount} Visitors</p>
     </div>
   </div>
 

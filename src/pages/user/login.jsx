@@ -24,6 +24,10 @@ import { useDispatch } from "react-redux";
         {
           goto('/')
         }
+        else
+        {
+          localStorage.removeItem('saved')
+        }
       },[])
 
       const handleGoogle = async ()=>{

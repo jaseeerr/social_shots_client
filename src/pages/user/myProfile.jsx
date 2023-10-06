@@ -354,6 +354,7 @@ function MyProfile() {
 
   const logout = () => {
 
+    localStorage.removeItem('saved')
     localStorage.removeItem('userToken')
     dispatch(updateUserdata({}))
     goto('/login')

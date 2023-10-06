@@ -25,6 +25,7 @@ function ProfileBar() {
 
 
     localStorage.removeItem('userToken')
+    localStorage.removeItem('saved')
   dispatch(updateUserdata({}))
     goto('/login')
 
