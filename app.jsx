@@ -73,7 +73,7 @@ const UserLayout = ()=>{
         const d1 = x2.getDay()
         const y1 = x2.getFullYear()
 
-        console.log(x)
+        
 
         if(!localStorage.getItem('saved') || m!=m1 && d!=d1 && y!=y1)
         {
